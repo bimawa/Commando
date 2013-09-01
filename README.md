@@ -3,8 +3,8 @@
 Currently alpha quality
 
 ## Features
-- escape from textfields
-- escape from alertviews
+- Commando roll (Esc Key) outta UITextFields/UITextViews
+- Commando roll (Esc Key) from UIAlertviews
 
 ## TODO
 - find all tapable fields on screen - vimium style
@@ -16,5 +16,7 @@ Currently alpha quality
 
 ## Credits
 http://vimium.github.io/
+
 https://github.com/zats/Poltergeist
+
 https://github.com/orta/ORSimulatorKeyboardAccessor
