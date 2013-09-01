@@ -20,7 +20,7 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"test" message:@"hello" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ok", nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Test" message:@"Hello" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ok", nil];
     [alertView show];
 }
 

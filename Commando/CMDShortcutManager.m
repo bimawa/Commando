@@ -22,7 +22,6 @@
 #else
 
 #import <QuartzCore/QuartzCore.h> //TODO remove
-#import "Masonry.h"
 #import "CMDHighlighterView.h"
 
 static NSString* const kCMDFindHintCharacters = @"sadfjklewcmpgh";
@@ -107,9 +106,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             self.mode = CMDShortcutModeFind;
             self.findMatch = @"";
             [self.keyWindow.subviews.lastObject addSubview:self.overlayView];
-            [self.overlayView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.edges.equalTo(self.overlayView.superview);
-            }];
+            self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
             //find all tapable views
             [self highlightSubviewsOfView:self.keyWindow];
@@ -241,9 +238,9 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             CMDHighlighterView *highlighterView = CMDHighlighterView.new;
             highlighterView.highlightColor = self.findHighlightColor;
             [self.overlayView addSubview:highlighterView];
-            [highlighterView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.edges.equalTo(subview);
-            }];
+            
+            highlighterView.frame = [subview.superview convertRect:subview.frame toView:highlighterView];
+
             [self.highlighterViews addObject:highlighterView];
         }
         

@@ -7,7 +7,6 @@
 //
 
 #import "CMDHighlighterView.h"
-#import "Masonry.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface CMDHighlighterView ()
@@ -23,22 +22,27 @@
     if (!self) return nil;
 
     self.hintLabel = UILabel.new;
+    self.hintLabel.textAlignment = NSTextAlignmentCenter;
     self.hintLabel.textColor = [UIColor blackColor];
     self.hintLabel.font = [UIFont boldSystemFontOfSize:12];
     [self addSubview:self.hintLabel];
 
-    [self.hintLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(@0);
-        make.top.equalTo(@0);
-    }];
-
     return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+
+    [self.hintLabel sizeToFit];
+    CGRect frame = self.hintLabel.frame;
+    frame.size.width += 6;
+    self.hintLabel.frame = frame;
 }
 
 - (void)setHint:(NSString *)hint {
     _hint = hint;
     
-    self.hintLabel.text = [NSString stringWithFormat:@" %@ ", hint];
+    self.hintLabel.text = hint;
     [self setNeedsLayout];
 }
 

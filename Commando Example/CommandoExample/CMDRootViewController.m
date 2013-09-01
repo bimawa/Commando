@@ -8,6 +8,8 @@
 
 #import "CMDRootViewController.h"
 #import "CMDSimpleFormViewController.h"
+#import "CMDCatalogViewController.h"
+#import "CMDSimpleGridViewController.h"
 
 static NSString * const kMASCellReuseIdentifier = @"kMASCellReuseIdentifier";
 
@@ -26,7 +28,9 @@ static NSString * const kMASCellReuseIdentifier = @"kMASCellReuseIdentifier";
     self.title = @"Examples";
 
     self.exampleControllers = @[
-        CMDSimpleFormViewController.new
+        CMDSimpleFormViewController.new,
+        CMDSimpleGridViewController.new,
+        CMDCatalogViewController.new,
     ];
 
     return self;
