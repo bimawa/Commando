@@ -32,8 +32,8 @@ In your `main.m` :
  int main(int argc, char *argv[]) {
     @autoreleasepool {
         return UIApplicationMain(argc, argv,
-            NSStringFromClass([ORKeyboardReactingApplication class]),
-            NSStringFromClass([ORAppDelegate class]));
+            NSStringFromClass([CMDCommandoApplication class]),
+            NSStringFromClass([MYAppDelegate class]));
     }
  }
 ```
