@@ -23,3 +23,5 @@ Currently alpha quality
 - Inspired by [vimium](http://vimium.github.io/)
 - Code for listening to keyboard events [ORSimulatorKeyboardAccessor](https://github.com/orta/ORSimulatorKeyboardAccessor)
 - Code for creating fake UITouches [KIF](https://github.com/kif-framework/KIF)
+- Arnold Schwarzenegger
+![Arnie](https://github.com/cloudkite/Commando/raw/master/commando.jpg)
