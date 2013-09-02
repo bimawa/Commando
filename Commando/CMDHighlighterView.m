@@ -39,6 +39,28 @@
     self.hintLabel.frame = frame;
 }
 
+#pragma mark - public
+
+- (void)updateFrame {
+    self.frame = [self.targetView.superview convertRect:self.targetView.frame toView:self];
+}
+
+- (BOOL)highlightMatch:(NSString *)matchString {
+    if (matchString.length && ![self.hint hasPrefix:matchString.uppercaseString]) {
+        self.alpha = 0;
+        return NO;
+    }
+
+    self.alpha = 1;
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:self.hint];
+    [str addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithWhite:0 alpha:0.5] range:NSMakeRange(0, matchString.length)];
+    self.hintLabel.attributedText = str;
+    [self setNeedsLayout];
+    return YES;
+}
+
+#pragma mark - properties
+
 - (void)setHint:(NSString *)hint {
     _hint = hint;
     

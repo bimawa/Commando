@@ -10,7 +10,11 @@
 
 @interface CMDHighlighterView : UIView
 
+@property (nonatomic, weak) UIView *targetView;
 @property (nonatomic, strong) UIColor *highlightColor;
 @property (nonatomic, strong) NSString *hint;
+
+- (void)updateFrame;
+- (BOOL)highlightMatch:(NSString *)matchString;
 
 @end

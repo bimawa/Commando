@@ -61,6 +61,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     //self.overlayView.layer.borderColor = UIColor.blackColor.CGColor; //TODO remove
     //self.overlayView.layer.borderWidth = 1;
     self.overlayView.userInteractionEnabled = NO;
+    self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.highlighterViews = NSMutableArray.new;
 
     //defaults
@@ -68,12 +69,20 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     self.findHighlightColor = UIColor.greenColor;
     self.traverseShortcutKey = CMDKeyboardKeyTab;
     self.traverseHighlightColor = UIColor.blueColor;
+    
+    // listen for device orientation changes to reset mode
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChangeNotification:) name:UIDeviceOrientationDidChangeNotification object:nil];
 
     return self;
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)deviceOrientationDidChangeNotification:(NSNotification *)notification {
+    self.mode = CMDShortcutModeIdle;
 }
 
 #pragma mark - public
@@ -106,7 +115,6 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             self.mode = CMDShortcutModeFind;
             self.findMatch = @"";
             [self.keyWindow.subviews.lastObject addSubview:self.overlayView];
-            self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
             //find all tapable views
             [self highlightSubviewsOfView:self.keyWindow];
@@ -115,6 +123,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             NSArray *hintStrings = [self generateHintStringsForViewCount:self.highlighterViews.count];
             for (CMDHighlighterView *highlighterView in self.highlighterViews) {
                 highlighterView.hint = hintStrings[[self.highlighterViews indexOfObject:highlighterView]];
+                [highlighterView updateFrame];
             }
         }
     } else {
@@ -147,8 +156,20 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 #pragma mark - highlighting
 
 - (void)filterHighlightedViews {
-    //TODO
-    NSLog(@"findMatch: %@", self.findMatch);
+    NSLog(@"matchString %@", self.findMatch);
+    BOOL hasMatches = NO;
+    for (CMDHighlighterView *highlighterView in self.highlighterViews) {
+        BOOL isMatch = [highlighterView highlightMatch:self.findMatch];
+        hasMatches = isMatch || hasMatches;
+        if ([highlighterView.hint isEqualToString:self.findMatch.uppercaseString]) {
+            //TODO simulate click on this view
+            //self.mode = CMDShortcutModeIdle;
+            //return;
+        }
+    }
+    if (!hasMatches) {
+        self.mode = CMDShortcutModeIdle;
+    }
 }
 
 - (NSArray *)generateHintStringsForViewCount:(int)viewCount {
@@ -238,9 +259,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             CMDHighlighterView *highlighterView = CMDHighlighterView.new;
             highlighterView.highlightColor = self.findHighlightColor;
             [self.overlayView addSubview:highlighterView];
-            
-            highlighterView.frame = [subview.superview convertRect:subview.frame toView:highlighterView];
-
+            highlighterView.targetView = subview;
             [self.highlighterViews addObject:highlighterView];
         }
         
