@@ -29,13 +29,15 @@ To listen to keyboard events your app must use the `CMDCommandoApplication` cust
 In your `main.m` :
 
 ``` objc
- int main(int argc, char *argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv,
-            NSStringFromClass([CMDCommandoApplication class]),
-            NSStringFromClass([MYAppDelegate class]));
-    }
- }
+#import "CMDCommandoApplication.h"
+
+int main(int argc, char *argv[]) {
+   @autoreleasepool {
+       return UIApplicationMain(argc, argv,
+           NSStringFromClass([CMDCommandoApplication class]),
+           NSStringFromClass([MYAppDelegate class]));
+   }
+}
 ```
 
 ## TODO
