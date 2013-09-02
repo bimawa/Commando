@@ -8,15 +8,16 @@ Currently alpha quality
 - Commando roll outta UIAlertviews
 
 ####`f` key
-- Find all tapable fields on screen - badass vimium style
+- Find all tapable fields on screen - badass [vimium](http://vimium.github.io/) style
 
 ## TODO
-- tab between tapable fields, ordered by view frame, then enter key,
-- scroll 'default' scrollview
-- select specific scrollview to scroll
-- tap/pan gesture support
-- uinavigationcontroller back button shortcut
+- Scroll 'default' (largest frame) UIScrollView
+- Select specific UIScrollView to scroll
+- Tab between tapable UIViews ordered by view frame, then hit enter key to tap,
+- UIPanGestureRecognizer, UISwipeGestureRecognizer support
+- UIVavigationController back button shortcut
 
 ## Credits
-- http://vimium.github.io/
-- https://github.com/orta/ORSimulatorKeyboardAccessor
+- Inspired by [vimium](http://vimium.github.io/)
+- Code for listening to Keyboard events [ORSimulatorKeyboardAccessor](https://github.com/orta/ORSimulatorKeyboardAccessor)
+- Code for creating fake UITouches [KIF](https://github.com/kif-framework/KIF)
