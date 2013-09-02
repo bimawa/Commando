@@ -1,5 +1,7 @@
 # Commando
 
+l33t commandos never use the mouse!
+
 ![Demo](https://github.com/cloudkite/Commando/raw/master/demo.gif)
 
 ## Features
