@@ -19,6 +19,25 @@ l33t commandos never use the mouse!
 - Scroll like a boss
 - Scrolls the 'default' (largest frame) UIScrollView
 
+## Installation
+Use the wonderful [CocoaPods](http://github.com/CocoaPods/CocoaPods).
+
+In your Podfile
+>`pod 'Commando'`
+
+To listen to keyboard events your app must use the `CMDCommandoApplication` custom UIApplication subclass. You can reliably leave that in for release as any non-simulator builds will only compile to an empty UIApplication subclass.
+In your `main.m` :
+
+``` objc
+ int main(int argc, char *argv[]) {
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv,
+            NSStringFromClass([ORKeyboardReactingApplication class]),
+            NSStringFromClass([ORAppDelegate class]));
+    }
+ }
+```
+
 ## TODO
 - Select specific UIScrollView to scroll
 - Tab between tapable UIViews ordered by view frame, then hit enter key to tap,
