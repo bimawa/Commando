@@ -23,13 +23,14 @@
 
 #import "CMDHighlighterView.h"
 #import "UITouch+CMDAdditions.h"
+#import "UIView+CMDAdditions.h"
 
 static double const kCMDFindCompleteDelay = 0.3;
 static NSString* const kCMDFindHintCharacters = @"sadfjklewcmpgh";
 
 typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 	CMDShortcutModeIdle,
-    CMDShortcutModeFind,
+    CMDShortcutModeFind
 };
 
 @interface CMDShortcutManager ()
@@ -39,6 +40,8 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 @property (nonatomic, strong) NSString *findMatch;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) NSMutableArray *highlighterViews;
+@property (nonatomic, weak) UIScrollView *currentScrollView;
+@property (nonatomic, assign) CGFloat scrollSpeed;
 
 @end
 
@@ -135,6 +138,47 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             } else {
                 [navigationBar popNavigationItemAnimated:YES];
             }
+        } else if (key == CMDKeyboardKeyLeft ||
+                   key == CMDKeyboardKeyRight ||
+                   key == CMDKeyboardKeyUp ||
+                   key == CMDKeyboardKeyDown) {
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reset) object:nil];
+            if (!self.currentScrollView) {
+                NSArray *scrollViews = [self findSubviewsOfClass:UIScrollView.class inView:self.keyWindow];
+
+                UIScrollView *largestScrollView = [scrollViews lastObject];
+                CGFloat currentLargestArea = largestScrollView.bounds.size.width * largestScrollView.bounds.size.height;
+                for (UIScrollView *scrollView in scrollViews) {
+                    CGFloat area = scrollView.bounds.size.width * scrollView.bounds.size.height;
+                    if (area > currentLargestArea) {
+                        currentLargestArea = area;
+                        largestScrollView = scrollView;
+                    }
+                }
+                self.currentScrollView = largestScrollView;
+                if (!self.currentScrollView) return;
+            }
+
+            CGPoint contentOffset = self.currentScrollView.contentOffset;
+            self.scrollSpeed++;
+            if (key == CMDKeyboardKeyDown) {
+                contentOffset.y += self.scrollSpeed;
+            }
+            if (key == CMDKeyboardKeyUp) {
+                contentOffset.y -= self.scrollSpeed;
+            }
+            if (key == CMDKeyboardKeyLeft) {
+                contentOffset.x -= self.scrollSpeed;
+            }
+            if (key == CMDKeyboardKeyRight) {
+                contentOffset.x += self.scrollSpeed;
+            }
+            contentOffset.x = MIN(MAX(0, contentOffset.x), MAX(self.currentScrollView.contentSize.width - CGRectGetWidth(self.currentScrollView.frame), 0));
+            contentOffset.y = MIN(MAX(0, contentOffset.y), MAX(self.currentScrollView.contentSize.height - CGRectGetHeight(self.currentScrollView.frame), 0));
+            [UIView animateWithDuration:0.05 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+                self.currentScrollView.contentOffset = contentOffset;
+            } completion:nil];
+            [self performSelector:@selector(reset) withObject:nil afterDelay:0.3];
         }
     } else {
         if (self.mode == CMDShortcutModeFind) {
@@ -159,7 +203,22 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 }
 
 - (void)reset {
+    NSLog(@"reset");
     self.mode = CMDShortcutModeIdle;
+}
+
+#pragma mark - view hierarchy helpers
+
+- (NSArray *)findSubviewsOfClass:(Class)class inView:(UIView *)view {
+    NSMutableArray *views = NSMutableArray.new;
+    for (UIView *subview in view.subviews) {
+        if ([subview isKindOfClass:class]) {
+            [views addObject:subview];
+        }
+
+        [views addObjectsFromArray:[self findSubviewsOfClass:class inView:subview]];
+    }
+    return views;
 }
 
 - (UIView *)findSubviewOfClass:(Class)class inView:(UIView *)view {
@@ -172,23 +231,14 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     return nil;
 }
 
-#pragma mark - highlighting
+#pragma mark - fake touch events
 
 - (void)performTapOnView:(UIView *)view {
-    UITouch *touch = [[UITouch alloc] initInView:view];
-    UIEvent *event = [touch event];
-
-    [[UIApplication sharedApplication] sendEvent:event];
-    [touch setPhase:UITouchPhaseEnded];
-    [[UIApplication sharedApplication] sendEvent:event];
-
-    // Dispatching the event doesn't actually update the first responder, so fake it
-    if ([view canBecomeFirstResponder]) {
-        [view becomeFirstResponder];
-    }
-    
+    [view fireTapEvents];
     self.mode = CMDShortcutModeIdle;
 }
+
+#pragma mark - highlighting
 
 - (void)filterHighlightedViews {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -333,6 +383,8 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
     if (mode == CMDShortcutModeIdle) {
         [self resetHighlightedViews];
+        self.currentScrollView = nil;
+        self.scrollSpeed = 1;
     }
 }
 

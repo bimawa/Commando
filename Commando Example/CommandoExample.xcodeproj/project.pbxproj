@@ -24,6 +24,7 @@
 		DDB6094517D33ED60082B3DA /* CMDCatalogCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB6094417D33ED60082B3DA /* CMDCatalogCell.m */; };
 		DDB6094817D34C360082B3DA /* CMDSimpleGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB6094717D34C360082B3DA /* CMDSimpleGridViewController.m */; };
 		DDB6094A17D34D570082B3DA /* CMDSimpleFormViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DDB6094917D34D570082B3DA /* CMDSimpleFormViewController.xib */; };
+		DDF4495717D4A83800C529B6 /* UIView+CMDAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DDF4495617D4A83800C529B6 /* UIView+CMDAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,8 @@
 		DDB6094617D34C360082B3DA /* CMDSimpleGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDSimpleGridViewController.h; sourceTree = "<group>"; };
 		DDB6094717D34C360082B3DA /* CMDSimpleGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDSimpleGridViewController.m; sourceTree = "<group>"; };
 		DDB6094917D34D570082B3DA /* CMDSimpleFormViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CMDSimpleFormViewController.xib; sourceTree = "<group>"; };
+		DDF4495517D4A83800C529B6 /* UIView+CMDAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+CMDAdditions.h"; sourceTree = "<group>"; };
+		DDF4495617D4A83800C529B6 /* UIView+CMDAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+CMDAdditions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +141,8 @@
 				DD0C5BA417D16B2D0052AE16 /* CMDHighlighterView.m */,
 				DD3C0F6817D4444100037FBE /* UITouch+CMDAdditions.h */,
 				DD3C0F6917D4444100037FBE /* UITouch+CMDAdditions.m */,
+				DDF4495517D4A83800C529B6 /* UIView+CMDAdditions.h */,
+				DDF4495617D4A83800C529B6 /* UIView+CMDAdditions.m */,
 			);
 			name = Commando;
 			path = ../Commando;
@@ -236,6 +241,7 @@
 				DD104D5E17D33C86000A77DE /* CMDCatalogViewController.m in Sources */,
 				DDB6094517D33ED60082B3DA /* CMDCatalogCell.m in Sources */,
 				DDB6094817D34C360082B3DA /* CMDSimpleGridViewController.m in Sources */,
+				DDF4495717D4A83800C529B6 /* UIView+CMDAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
