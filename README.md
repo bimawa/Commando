@@ -15,9 +15,9 @@ Currently alpha quality
 - Select specific UIScrollView to scroll
 - Tab between tapable UIViews ordered by view frame, then hit enter key to tap,
 - UIPanGestureRecognizer, UISwipeGestureRecognizer support
-- UIVavigationController back button shortcut
+- UINavigationController back button shortcut
 
 ## Credits
 - Inspired by [vimium](http://vimium.github.io/)
-- Code for listening to Keyboard events [ORSimulatorKeyboardAccessor](https://github.com/orta/ORSimulatorKeyboardAccessor)
+- Code for listening to keyboard events [ORSimulatorKeyboardAccessor](https://github.com/orta/ORSimulatorKeyboardAccessor)
 - Code for creating fake UITouches [KIF](https://github.com/kif-framework/KIF)
