@@ -30,7 +30,6 @@ static NSString* const kCMDFindHintCharacters = @"sadfjklewcmpgh";
 typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 	CMDShortcutModeIdle,
     CMDShortcutModeFind,
-    CMDShortcutModeTraverse,
 };
 
 @interface CMDShortcutManager ()
@@ -64,6 +63,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     self.highlighterViews = NSMutableArray.new;
 
     //defaults
+    self.popNavigationItemShortcutKey = CMDKeyboardKeyBackspace;
     self.findShortcutKey = CMDKeyboardKeyF;
     self.findHighlightColor = UIColor.greenColor;
     self.traverseShortcutKey = CMDKeyboardKeyTab;
@@ -125,6 +125,16 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
                 highlighterView.hint = hintStrings[[self.highlighterViews indexOfObject:highlighterView]];
                 [highlighterView updateFrame];
             }
+        } else if (key == self.popNavigationItemShortcutKey) {
+            UINavigationBar *navigationBar = (id)[self findSubviewOfClass:UINavigationBar.class inView:self.keyWindow];
+
+            //cannot call [navigationBar popNavigationItemAnimated:YES] if navigationBar is within a UINavigationController
+            UINavigationController *navigationController = [navigationBar.delegate isKindOfClass:UINavigationController.class] ? navigationBar.delegate : nil ;
+            if (navigationController) {
+                [navigationController popViewControllerAnimated:YES];
+            } else {
+                [navigationBar popNavigationItemAnimated:YES];
+            }
         }
     } else {
         if (self.mode == CMDShortcutModeFind) {
@@ -137,8 +147,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
                     return;
                 }
             } else {
-                //check new key is in alphabet
-                if (keyString && [kCMDFindHintCharacters rangeOfString:keyString].location != NSNotFound) {
+                if (keyString) {
                     self.findMatch = [self.findMatch stringByAppendingString:keyString];
                 }
             }
@@ -151,6 +160,16 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 - (void)reset {
     self.mode = CMDShortcutModeIdle;
+}
+
+- (UIView *)findSubviewOfClass:(Class)class inView:(UIView *)view {
+    for (UIView *subview in view.subviews) {
+        if ([subview isKindOfClass:class]) return subview;
+
+        id result = [self findSubviewOfClass:class inView:subview];
+        if (result) return result;
+    }
+    return nil;
 }
 
 #pragma mark - highlighting
@@ -312,16 +331,8 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 - (void)setMode:(CMDShortcutMode)mode {
     _mode = mode;
 
-    switch (mode) {
-        case CMDShortcutModeIdle:
-            [self resetHighlightedViews];
-            NSLog(@"idle");
-            break;
-        case CMDShortcutModeFind:
-            NSLog(@"find");
-            break;
-        default:
-            break;
+    if (mode == CMDShortcutModeIdle) {
+        [self resetHighlightedViews];
     }
 }
 

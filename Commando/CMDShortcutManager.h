@@ -11,6 +11,8 @@
 
 @interface CMDShortcutManager : NSObject
 
+@property (nonatomic, assign) CMDKeyboardKey popNavigationItemShortcutKey; //defaults to CMDKeyboardKeyBackspace
+
 @property (nonatomic, assign) CMDKeyboardKey findShortcutKey; //defaults to CMDKeyboardKeyF
 @property (nonatomic, strong) UIColor *findHighlightColor; //defaults to greenColor
 
