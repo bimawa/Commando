@@ -20,6 +20,7 @@
 		DD0C5BA717D16C170052AE16 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD0C5BA617D16C170052AE16 /* QuartzCore.framework */; };
 		DD0C5BAF17D1BB8C0052AE16 /* CMDSimpleFormViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5BAD17D1BB8C0052AE16 /* CMDSimpleFormViewController.m */; };
 		DD104D5E17D33C86000A77DE /* CMDCatalogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD104D5D17D33C86000A77DE /* CMDCatalogViewController.m */; };
+		DD3C0F6A17D4444100037FBE /* UITouch+CMDAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DD3C0F6917D4444100037FBE /* UITouch+CMDAdditions.m */; };
 		DDB6094517D33ED60082B3DA /* CMDCatalogCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB6094417D33ED60082B3DA /* CMDCatalogCell.m */; };
 		DDB6094817D34C360082B3DA /* CMDSimpleGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB6094717D34C360082B3DA /* CMDSimpleGridViewController.m */; };
 		DDB6094A17D34D570082B3DA /* CMDSimpleFormViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DDB6094917D34D570082B3DA /* CMDSimpleFormViewController.xib */; };
@@ -50,6 +51,8 @@
 		DD0C5BAD17D1BB8C0052AE16 /* CMDSimpleFormViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDSimpleFormViewController.m; sourceTree = "<group>"; };
 		DD104D5C17D33C86000A77DE /* CMDCatalogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDCatalogViewController.h; sourceTree = "<group>"; };
 		DD104D5D17D33C86000A77DE /* CMDCatalogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDCatalogViewController.m; sourceTree = "<group>"; };
+		DD3C0F6817D4444100037FBE /* UITouch+CMDAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITouch+CMDAdditions.h"; sourceTree = "<group>"; };
+		DD3C0F6917D4444100037FBE /* UITouch+CMDAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITouch+CMDAdditions.m"; sourceTree = "<group>"; };
 		DDB6094317D33ED60082B3DA /* CMDCatalogCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDCatalogCell.h; sourceTree = "<group>"; };
 		DDB6094417D33ED60082B3DA /* CMDCatalogCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDCatalogCell.m; sourceTree = "<group>"; };
 		DDB6094617D34C360082B3DA /* CMDSimpleGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDSimpleGridViewController.h; sourceTree = "<group>"; };
@@ -133,6 +136,8 @@
 				DD0C5B9117D09B340052AE16 /* CMDShortcutManager.m */,
 				DD0C5BA317D16B2D0052AE16 /* CMDHighlighterView.h */,
 				DD0C5BA417D16B2D0052AE16 /* CMDHighlighterView.m */,
+				DD3C0F6817D4444100037FBE /* UITouch+CMDAdditions.h */,
+				DD3C0F6917D4444100037FBE /* UITouch+CMDAdditions.m */,
 			);
 			name = Commando;
 			path = ../Commando;
@@ -224,6 +229,7 @@
 				DD0C5B8017D098720052AE16 /* CMDAppDelegate.m in Sources */,
 				DD0C5B9217D09B340052AE16 /* CMDCommandoApplication.m in Sources */,
 				DD0C5B9317D09B340052AE16 /* CMDShortcutManager.m in Sources */,
+				DD3C0F6A17D4444100037FBE /* UITouch+CMDAdditions.m in Sources */,
 				DD0C5B9B17D14C8B0052AE16 /* CMDRootViewController.m in Sources */,
 				DD0C5BA517D16B2D0052AE16 /* CMDHighlighterView.m in Sources */,
 				DD0C5BAF17D1BB8C0052AE16 /* CMDSimpleFormViewController.m in Sources */,

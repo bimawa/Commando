@@ -21,9 +21,10 @@
 
 #else
 
-#import <QuartzCore/QuartzCore.h> //TODO remove
 #import "CMDHighlighterView.h"
+#import "UITouch+CMDAdditions.h"
 
+static double const kCMDFindCompleteDelay = 0.3;
 static NSString* const kCMDFindHintCharacters = @"sadfjklewcmpgh";
 
 typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
@@ -58,8 +59,6 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     if (!self) return nil;
 
     self.overlayView = UIView.new;
-    //self.overlayView.layer.borderColor = UIColor.blackColor.CGColor; //TODO remove
-    //self.overlayView.layer.borderWidth = 1;
     self.overlayView.userInteractionEnabled = NO;
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.highlighterViews = NSMutableArray.new;
@@ -79,6 +78,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
 - (void)deviceOrientationDidChangeNotification:(NSNotification *)notification {
@@ -155,16 +155,32 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 #pragma mark - highlighting
 
+- (void)performTapOnView:(UIView *)view {
+    UITouch *touch = [[UITouch alloc] initInView:view];
+    UIEvent *event = [touch event];
+
+    [[UIApplication sharedApplication] sendEvent:event];
+    [touch setPhase:UITouchPhaseEnded];
+    [[UIApplication sharedApplication] sendEvent:event];
+
+    // Dispatching the event doesn't actually update the first responder, so fake it
+    if ([view canBecomeFirstResponder]) {
+        [view becomeFirstResponder];
+    }
+    
+    self.mode = CMDShortcutModeIdle;
+}
+
 - (void)filterHighlightedViews {
-    NSLog(@"matchString %@", self.findMatch);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     BOOL hasMatches = NO;
     for (CMDHighlighterView *highlighterView in self.highlighterViews) {
         BOOL isMatch = [highlighterView highlightMatch:self.findMatch];
         hasMatches = isMatch || hasMatches;
         if ([highlighterView.hint isEqualToString:self.findMatch.uppercaseString]) {
-            //TODO simulate click on this view
-            //self.mode = CMDShortcutModeIdle;
-            //return;
+            //simulate click on this view
+            [self performSelector:@selector(performTapOnView:) withObject:highlighterView.targetView afterDelay:kCMDFindCompleteDelay];
+            return;
         }
     }
     if (!hasMatches) {

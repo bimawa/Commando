@@ -3,11 +3,14 @@
 Currently alpha quality
 
 ## Features
-- Commando roll (Esc Key) outta UITextFields/UITextViews
-- Commando roll (Esc Key) from UIAlertviews
+####`esc` key
+- Commando roll outta UITextFields/UITextViews
+- Commando roll outta UIAlertviews
+
+####`f` key
+- Find all tapable fields on screen - badass vimium style
 
 ## TODO
-- find all tapable fields on screen - vimium style
 - tab between tapable fields, ordered by view frame, then enter key,
 - scroll 'default' scrollview
 - select specific scrollview to scroll
@@ -15,8 +18,5 @@ Currently alpha quality
 - uinavigationcontroller back button shortcut
 
 ## Credits
-http://vimium.github.io/
-
-https://github.com/zats/Poltergeist
-
-https://github.com/orta/ORSimulatorKeyboardAccessor
+- http://vimium.github.io/
+- https://github.com/orta/ORSimulatorKeyboardAccessor
