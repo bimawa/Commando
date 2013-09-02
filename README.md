@@ -1,6 +1,6 @@
 # Commando
 
-l33t commandos never use the mouse!
+l33t commandos don't wear undies and never use the mouse!
 
 ![Demo](https://github.com/cloudkite/Commando/raw/master/demo.gif)
 
@@ -10,14 +10,13 @@ l33t commandos never use the mouse!
 - Commando roll out of UIAlertviews
 
 ####`f` key
-- Find all tapable fields on screen - badass [vimium](http://vimium.github.io/) style
+- Be a f'ng ninja. Find all tapable fields on screen - badass [vimium](http://vimium.github.io/) style
 
 ####`delete` key
-- Pop a cap in UINavigationController (trigger back)
+- Pop a cap in UINavigationController (trigger back button item)
 
 ####`arrow` keys
-- Scroll like a boss
-- Scrolls the 'default' (largest frame) UIScrollView
+- Real commandos use crossbows. Scroll the 'default' (largest frame) UIScrollView
 
 ## Installation
 Use the wonderful [CocoaPods](http://github.com/CocoaPods/CocoaPods).
@@ -44,6 +43,7 @@ int main(int argc, char *argv[]) {
 - Select specific UIScrollView to scroll
 - Tab between tapable UIViews ordered by view frame, then hit enter key to tap,
 - UIPanGestureRecognizer, UISwipeGestureRecognizer support
+- UIWebView support
 
 ## Credits
 - Inspired by [vimium](http://vimium.github.io/)
