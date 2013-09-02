@@ -13,8 +13,11 @@ Currently alpha quality
 ####`delete` key
 - Pop a cap in UINavigationController (trigger back)
 
+####`arrow` keys
+- Scroll like a boss
+- Scrolls the 'default' (largest frame) UIScrollView
+
 ## TODO
-- Scroll 'default' (largest frame) UIScrollView
 - Select specific UIScrollView to scroll
 - Tab between tapable UIViews ordered by view frame, then hit enter key to tap,
 - UIPanGestureRecognizer, UISwipeGestureRecognizer support
