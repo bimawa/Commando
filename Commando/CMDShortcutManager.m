@@ -30,14 +30,14 @@ static NSString* const kCMDFindHintCharacters = @"sadfjklewcmpgh";
 
 typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 	CMDShortcutModeIdle,
-    CMDShortcutModeFind
+    CMDShortcutModeFindHitZones
 };
 
 @interface CMDShortcutManager ()
 
 @property (nonatomic, assign) CMDShortcutMode mode;
 @property (nonatomic, assign) BOOL keyboardVisible;
-@property (nonatomic, strong) NSString *findMatch;
+@property (nonatomic, strong) NSString *findSearchString;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) NSMutableArray *highlighterViews;
 @property (nonatomic, weak) UIScrollView *currentScrollView;
@@ -67,10 +67,8 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
     //defaults
     self.popNavigationItemShortcutKey = CMDKeyboardKeyBackspace;
-    self.findShortcutKey = CMDKeyboardKeyF;
-    self.findHighlightColor = UIColor.greenColor;
-    self.traverseShortcutKey = CMDKeyboardKeyTab;
-    self.traverseHighlightColor = UIColor.blueColor;
+    self.findHitZonesShortcutKey = CMDKeyboardKeyF;
+    self.findHitZonesHighlightColor = UIColor.greenColor;
     
     // listen for device orientation changes to reset mode
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -83,6 +81,8 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
+
+#pragma mark - notifications
 
 - (void)deviceOrientationDidChangeNotification:(NSNotification *)notification {
     self.mode = CMDShortcutModeIdle;
@@ -114,9 +114,9 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     NSString *keyString = [self.class stringFromkey:key];
     
     if (self.mode == CMDShortcutModeIdle) {
-        if (key == self.findShortcutKey) {
-            self.mode = CMDShortcutModeFind;
-            self.findMatch = @"";
+        if (key == self.findHitZonesShortcutKey) {
+            self.mode = CMDShortcutModeFindHitZones;
+            self.findSearchString = @"";
             [self.keyWindow.subviews.lastObject addSubview:self.overlayView];
 
             //find all tapable views
@@ -129,7 +129,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
                 [highlighterView updateFrame];
             }
         } else if (key == self.popNavigationItemShortcutKey) {
-            UINavigationBar *navigationBar = (id)[self findSubviewOfClass:UINavigationBar.class inView:self.keyWindow];
+            UINavigationBar *navigationBar = (id)[self.keyWindow cmd_findSubviewOfClass:UINavigationBar.class];
 
             //cannot call [navigationBar popNavigationItemAnimated:YES] if navigationBar is within a UINavigationController
             UINavigationController *navigationController = [navigationBar.delegate isKindOfClass:UINavigationController.class] ? navigationBar.delegate : nil ;
@@ -144,7 +144,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
                    key == CMDKeyboardKeyDown) {
             [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reset) object:nil];
             if (!self.currentScrollView) {
-                NSArray *scrollViews = [self findSubviewsOfClass:UIScrollView.class inView:self.keyWindow];
+                NSArray *scrollViews = [self.keyWindow cmd_findSubviewsOfClass:UIScrollView.class];
 
                 UIScrollView *largestScrollView = [scrollViews lastObject];
                 CGFloat currentLargestArea = largestScrollView.bounds.size.width * largestScrollView.bounds.size.height;
@@ -181,18 +181,18 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             [self performSelector:@selector(reset) withObject:nil afterDelay:0.3];
         }
     } else {
-        if (self.mode == CMDShortcutModeFind) {
+        if (self.mode == CMDShortcutModeFindHitZones) {
             if (key == CMDKeyboardKeyBackspace) {
                 //deleting text
-                if (self.findMatch.length) {
-                    self.findMatch = [self.findMatch substringToIndex:self.findMatch.length-1];
+                if (self.findSearchString.length) {
+                    self.findSearchString = [self.findSearchString substringToIndex:self.findSearchString.length-1];
                 } else {
                     self.mode = CMDShortcutModeIdle;
                     return;
                 }
             } else {
                 if (keyString) {
-                    self.findMatch = [self.findMatch stringByAppendingString:keyString];
+                    self.findSearchString = [self.findSearchString stringByAppendingString:keyString];
                 }
             }
 
@@ -203,38 +203,15 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 }
 
 - (void)reset {
-    NSLog(@"reset");
     self.mode = CMDShortcutModeIdle;
 }
 
-#pragma mark - view hierarchy helpers
 
-- (NSArray *)findSubviewsOfClass:(Class)class inView:(UIView *)view {
-    NSMutableArray *views = NSMutableArray.new;
-    for (UIView *subview in view.subviews) {
-        if ([subview isKindOfClass:class]) {
-            [views addObject:subview];
-        }
-
-        [views addObjectsFromArray:[self findSubviewsOfClass:class inView:subview]];
-    }
-    return views;
-}
-
-- (UIView *)findSubviewOfClass:(Class)class inView:(UIView *)view {
-    for (UIView *subview in view.subviews) {
-        if ([subview isKindOfClass:class]) return subview;
-
-        id result = [self findSubviewOfClass:class inView:subview];
-        if (result) return result;
-    }
-    return nil;
-}
 
 #pragma mark - fake touch events
 
 - (void)performTapOnView:(UIView *)view {
-    [view fireTapEvents];
+    [view cmd_fireTapEvents];
     self.mode = CMDShortcutModeIdle;
 }
 
@@ -244,9 +221,9 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     BOOL hasMatches = NO;
     for (CMDHighlighterView *highlighterView in self.highlighterViews) {
-        BOOL isMatch = [highlighterView highlightMatch:self.findMatch];
+        BOOL isMatch = [highlighterView highlightIfMatches:self.findSearchString];
         hasMatches = isMatch || hasMatches;
-        if ([highlighterView.hint isEqualToString:self.findMatch.uppercaseString]) {
+        if ([highlighterView.hint isEqualToString:self.findSearchString.uppercaseString]) {
             //simulate click on this view
             [self performSelector:@selector(performTapOnView:) withObject:highlighterView.targetView afterDelay:kCMDFindCompleteDelay];
             return;
@@ -257,15 +234,59 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     }
 }
 
+- (void)resetHighlightedViews {
+    [self.overlayView removeFromSuperview];
+    for (UIView *view in self.highlighterViews) {
+        [view removeFromSuperview];
+    }
+    [self.highlighterViews removeAllObjects];
+}
+
+- (void)highlightSubviewsOfView:(UIView *)view {
+	for (UIView *subview in view.subviews) {
+        if (view == self.overlayView) continue;
+        
+        if ([self shouldHighlightView:subview]) {
+            CMDHighlighterView *highlighterView = CMDHighlighterView.new;
+            highlighterView.highlightColor = self.findHitZonesHighlightColor;
+            [self.overlayView addSubview:highlighterView];
+            highlighterView.targetView = subview;
+            [self.highlighterViews addObject:highlighterView];
+        }
+        
+		[self highlightSubviewsOfView:subview];
+	}
+}
+
+- (BOOL)shouldHighlightView:(UIView *)view {
+    if (self.mode == CMDShortcutModeFindHitZones) {
+        if ([view isKindOfClass:UIControl.class]) return YES;
+        if ([view isKindOfClass:UITableViewCell.class]) return YES;
+        if ([view isKindOfClass:UICollectionViewCell.class]) return YES;
+        if ([view isKindOfClass:NSClassFromString(@"UINavigationItemButtonView")]) return YES;
+        for (UIGestureRecognizer *gestureRecognizer in view.gestureRecognizers) {
+            if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
+                UITapGestureRecognizer *tapGestureRecognizer = (id)gestureRecognizer;
+                if (tapGestureRecognizer.numberOfTapsRequired == 1) {
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
+}
+
+#pragma mark - hint code generation
+
 - (NSArray *)generateHintStringsForViewCount:(int)viewCount {
     NSString *hintCharacters = kCMDFindHintCharacters;
     //Determine how many digits the link hints will require in the worst case. Usually we do not need
     //all of these digits for every link single hint, so we can show shorter hints for a few of the links.
     double digitsNeeded = ceil(log(viewCount)/log(hintCharacters.length));
-    
+
     //Short hints are the number of hints we can possibly show which are (digitsNeeded - 1) digits in length.
     double shortHintCount = floor((pow(hintCharacters.length, digitsNeeded) - viewCount) / (double)hintCharacters.length);
-    
+
     double longHintCount = viewCount - shortHintCount;
 
     NSMutableArray *hintStrings = NSMutableArray.new;
@@ -307,7 +328,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 }
 
 /**
- * This shuffles the given set of hints so that they're scattered 
+ * This shuffles the given set of hints so that they're scattered
  * hints starting with the same character will be spread evenly throughout the array.
  */
 - (NSArray *)shuffleHintStrings:(NSArray *)hints characterSetLength:(int)characterSetLength {
@@ -326,54 +347,6 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
         [result addObjectsFromArray:bucket];
     }
     return result;
-}
-
-- (void)resetHighlightedViews {
-    [self.overlayView removeFromSuperview];
-    for (UIView *view in self.highlighterViews) {
-        [view removeFromSuperview];
-    }
-    [self.highlighterViews removeAllObjects];
-}
-
-- (void)highlightSubviewsOfView:(UIView *)view {
-	for (UIView *subview in view.subviews) {
-        if ([self shouldIgnoreView:subview]) continue;
-        
-        if ([self shouldHighlightView:subview]) {
-            CMDHighlighterView *highlighterView = CMDHighlighterView.new;
-            highlighterView.highlightColor = self.findHighlightColor;
-            [self.overlayView addSubview:highlighterView];
-            highlighterView.targetView = subview;
-            [self.highlighterViews addObject:highlighterView];
-        }
-        
-		[self highlightSubviewsOfView:subview];
-	}
-}
-
-- (BOOL)shouldIgnoreView:(UIView *)view {
-    if (view == self.overlayView) return YES;
-
-    return NO;
-}
-
-- (BOOL)shouldHighlightView:(UIView *)view {
-    if (self.mode == CMDShortcutModeFind) {
-        if ([view isKindOfClass:UIControl.class]) return YES;
-        if ([view isKindOfClass:UITableViewCell.class]) return YES;
-        if ([view isKindOfClass:UICollectionViewCell.class]) return YES;
-        if ([view isKindOfClass:NSClassFromString(@"UINavigationItemButtonView")]) return YES;
-        for (UIGestureRecognizer *gestureRecognizer in view.gestureRecognizers) {
-            if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
-                UITapGestureRecognizer *tapGestureRecognizer = (id)gestureRecognizer;
-                if (tapGestureRecognizer.numberOfTapsRequired == 1) {
-                    return YES;
-                }
-            }
-        }
-    }
-    return NO;
 }
 
 #pragma mark - properties

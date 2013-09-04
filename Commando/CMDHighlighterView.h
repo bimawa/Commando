@@ -15,6 +15,6 @@
 @property (nonatomic, strong) NSString *hint;
 
 - (void)updateFrame;
-- (BOOL)highlightMatch:(NSString *)matchString;
+- (BOOL)highlightIfMatches:(NSString *)match;
 
 @end

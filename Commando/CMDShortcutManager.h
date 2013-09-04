@@ -13,11 +13,8 @@
 
 @property (nonatomic, assign) CMDKeyboardKey popNavigationItemShortcutKey; //defaults to CMDKeyboardKeyBackspace
 
-@property (nonatomic, assign) CMDKeyboardKey findShortcutKey; //defaults to CMDKeyboardKeyF
-@property (nonatomic, strong) UIColor *findHighlightColor; //defaults to greenColor
-
-@property (nonatomic, assign) CMDKeyboardKey traverseShortcutKey; //defaults to CMDKeyboardKeyTab
-@property (nonatomic, strong) UIColor *traverseHighlightColor; //defaults to blueColor
+@property (nonatomic, assign) CMDKeyboardKey findHitZonesShortcutKey; //defaults to CMDKeyboardKeyF
+@property (nonatomic, strong) UIColor *findHitZonesHighlightColor; //defaults to greenColor
 
 + (instancetype)sharedManager;
 

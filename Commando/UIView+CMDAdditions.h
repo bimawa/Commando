@@ -12,7 +12,10 @@
 
 @interface UIView (CMDAdditions)
 
-- (void)fireTapEvents;
+- (void)cmd_fireTapEvents;
+
+- (NSArray *)cmd_findSubviewsOfClass:(Class)aClass;
+- (UIView *)cmd_findSubviewOfClass:(Class)aClass;
 
 @end
 

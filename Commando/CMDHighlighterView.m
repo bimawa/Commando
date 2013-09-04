@@ -45,16 +45,16 @@
     self.frame = [self.targetView.superview convertRect:self.targetView.frame toView:self];
 }
 
-- (BOOL)highlightMatch:(NSString *)matchString {
-    if (matchString.length && ![self.hint hasPrefix:matchString.uppercaseString]) {
+- (BOOL)highlightIfMatches:(NSString *)match {
+    if (match.length && ![self.hint hasPrefix:match.uppercaseString]) {
         self.alpha = 0;
         return NO;
     }
 
     self.alpha = 1;
-    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:self.hint];
-    [str addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithWhite:0 alpha:0.5] range:NSMakeRange(0, matchString.length)];
-    self.hintLabel.attributedText = str;
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.hint];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithWhite:0 alpha:0.5] range:NSMakeRange(0, match.length)];
+    self.hintLabel.attributedText = attributedString;
     [self setNeedsLayout];
     return YES;
 }

@@ -13,18 +13,42 @@
 
 @implementation UIView (CMDAdditions)
 
-- (void)fireTapEvents {
+- (void)cmd_fireTapEvents {
     UITouch *touch = [[UITouch alloc] initInView:self];
-    UIEvent *event = [touch event];
+    UIEvent *event = [touch cmd_event];
 
     [[UIApplication sharedApplication] sendEvent:event];
-    [touch setPhase:UITouchPhaseEnded];
+    [touch cmd_setPhase:UITouchPhaseEnded];
     [[UIApplication sharedApplication] sendEvent:event];
 
     // Dispatching the event doesn't actually update the first responder, so fake it
     if ([self canBecomeFirstResponder]) {
         [self becomeFirstResponder];
     }
+}
+
+#pragma mark - view hierarchy helpers
+
+- (NSArray *)cmd_findSubviewsOfClass:(Class)aClass {
+    NSMutableArray *views = NSMutableArray.new;
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:aClass]) {
+            [views addObject:subview];
+        }
+
+        [views addObjectsFromArray:[subview cmd_findSubviewsOfClass:aClass]];
+    }
+    return views;
+}
+
+- (UIView *)cmd_findSubviewOfClass:(Class)aClass {
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:aClass]) return subview;
+
+        id result = [subview cmd_findSubviewOfClass:aClass];
+        if (result) return result;
+    }
+    return nil;
 }
 
 @end

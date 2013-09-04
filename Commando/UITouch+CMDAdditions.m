@@ -114,18 +114,18 @@ typedef struct __GSEvent * GSEventRef;
     return [self initAtPoint:[view.window convertPoint:point fromView:view] inWindow:view.window];
 }
 
-- (void)setPhase:(UITouchPhase)phase {
+- (void)cmd_setPhase:(UITouchPhase)phase {
 	_phase = phase;
 	_timestamp = [[NSProcessInfo processInfo] systemUptime];
 }
 
-- (void)setLocationInWindow:(CGPoint)location {
+- (void)cmd_setLocationInWindow:(CGPoint)location {
 	_previousLocationInWindow = _locationInWindow;
 	_locationInWindow = location;
 	_timestamp = [[NSProcessInfo processInfo] systemUptime];
 }
 
-- (UIEvent *)event {
+- (UIEvent *)cmd_event {
     UIEvent *event = [[UIApplication sharedApplication] performSelector:@selector(_touchesEvent)];
 
     CGPoint location = [self locationInView:self.window];
