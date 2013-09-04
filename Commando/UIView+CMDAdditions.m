@@ -29,23 +29,23 @@
 
 #pragma mark - view hierarchy helpers
 
-- (NSArray *)cmd_findSubviewsOfClass:(Class)aClass {
+- (NSArray *)cmd_findSubviewsMatching:(BOOL(^)(UIView *subview))matching {
     NSMutableArray *views = NSMutableArray.new;
     for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:aClass]) {
+        if (matching(subview)) {
             [views addObject:subview];
         }
 
-        [views addObjectsFromArray:[subview cmd_findSubviewsOfClass:aClass]];
+        [views addObjectsFromArray:[subview cmd_findSubviewsMatching:matching]];
     }
     return views;
 }
 
-- (UIView *)cmd_findSubviewOfClass:(Class)aClass {
+- (UIView *)cmd_findSubviewMatching:(BOOL(^)(UIView *subview))matching {
     for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:aClass]) return subview;
+        if (matching(subview)) return subview;
 
-        id result = [subview cmd_findSubviewOfClass:aClass];
+        id result = [subview cmd_findSubviewMatching:matching];
         if (result) return result;
     }
     return nil;

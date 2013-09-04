@@ -140,7 +140,9 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 }
 
 - (void)popNavigationItem {
-    UINavigationBar *navigationBar = (id)[self.keyWindow cmd_findSubviewOfClass:UINavigationBar.class];
+    UINavigationBar *navigationBar = (id)[self.keyWindow cmd_findSubviewMatching:^BOOL(UIView *subview) {
+        return [subview isKindOfClass:UINavigationBar.class];
+    }];
 
     //cannot call [navigationBar popNavigationItemAnimated:YES] if navigationBar is within a UINavigationController
     UINavigationController *navigationController = [navigationBar.delegate isKindOfClass:UINavigationController.class] ? navigationBar.delegate : nil ;
@@ -152,25 +154,55 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 }
 
 - (void)activateFindHitZones {
+    [self resetHighlightedViews];
     self.mode = CMDShortcutModeFindHitZones;
     self.findSearchString = @"";
     [self.keyWindow.subviews.lastObject addSubview:self.overlayView];
-
+    
     //find all tapable views
-    [self highlightSubviewsOfView:self.keyWindow];
+    NSArray *tapableViews = [self.keyWindow cmd_findSubviewsMatching:^BOOL(UIView *view) {
+        if (view == self.overlayView) return NO;
+        if ([view isKindOfClass:UIControl.class]) return YES;
+        if ([view isKindOfClass:UITableViewCell.class]) return YES;
+        if ([view isKindOfClass:UICollectionViewCell.class]) return YES;
+        if ([view isKindOfClass:NSClassFromString(@"UINavigationItemButtonView")]) return YES;
+        for (UIGestureRecognizer *gestureRecognizer in view.gestureRecognizers) {
+            if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
+                UITapGestureRecognizer *tapGestureRecognizer = (id)gestureRecognizer;
+                if (tapGestureRecognizer.numberOfTapsRequired == 1) {
+                    return YES;
+                }
+            }
+        }
+        return NO;
+    }];
 
-    //attach hint strings
-    NSArray *hintStrings = [self generateHintStringsForViewCount:self.highlighterViews.count];
-    for (CMDHighlighterView *highlighterView in self.highlighterViews) {
-        highlighterView.hint = hintStrings[[self.highlighterViews indexOfObject:highlighterView]];
+    NSArray *hintStrings = [self generateHintStringsForViewCount:tapableViews.count];
+
+    int i = 0;
+    for (UIView *view in tapableViews) {
+        CMDHighlighterView *highlighterView = CMDHighlighterView.new;
+        highlighterView.highlightColor = self.findHitZonesHighlightColor;
+        [self.overlayView addSubview:highlighterView];
+        highlighterView.targetView = view;
+        [self.highlighterViews addObject:highlighterView];
+
+        //attach hint strings
+        highlighterView.hint = hintStrings[i];
+
+        //calculate frame
         [highlighterView updateFrame];
-    }
+
+        i++;
+	}
 }
 
 - (void)scrollWithKey:(CMDKeyboardKey)key {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reset) object:nil];
     if (!self.currentScrollView) {
-        NSArray *scrollViews = [self.keyWindow cmd_findSubviewsOfClass:UIScrollView.class];
+        NSArray *scrollViews = (id)[self.keyWindow cmd_findSubviewsMatching:^BOOL(UIView *subview) {
+            return [subview isKindOfClass:UIScrollView.class];
+        }];
 
         UIScrollView *largestScrollView = [scrollViews lastObject];
         CGFloat currentLargestArea = largestScrollView.bounds.size.width * largestScrollView.bounds.size.height;
@@ -255,40 +287,6 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
         [view removeFromSuperview];
     }
     [self.highlighterViews removeAllObjects];
-}
-
-- (void)highlightSubviewsOfView:(UIView *)view {
-	for (UIView *subview in view.subviews) {
-        if (view == self.overlayView) continue;
-        
-        if ([self shouldHighlightView:subview]) {
-            CMDHighlighterView *highlighterView = CMDHighlighterView.new;
-            highlighterView.highlightColor = self.findHitZonesHighlightColor;
-            [self.overlayView addSubview:highlighterView];
-            highlighterView.targetView = subview;
-            [self.highlighterViews addObject:highlighterView];
-        }
-        
-		[self highlightSubviewsOfView:subview];
-	}
-}
-
-- (BOOL)shouldHighlightView:(UIView *)view {
-    if (self.mode == CMDShortcutModeFindHitZones) {
-        if ([view isKindOfClass:UIControl.class]) return YES;
-        if ([view isKindOfClass:UITableViewCell.class]) return YES;
-        if ([view isKindOfClass:UICollectionViewCell.class]) return YES;
-        if ([view isKindOfClass:NSClassFromString(@"UINavigationItemButtonView")]) return YES;
-        for (UIGestureRecognizer *gestureRecognizer in view.gestureRecognizers) {
-            if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
-                UITapGestureRecognizer *tapGestureRecognizer = (id)gestureRecognizer;
-                if (tapGestureRecognizer.numberOfTapsRequired == 1) {
-                    return YES;
-                }
-            }
-        }
-    }
-    return NO;
 }
 
 #pragma mark - hint code generation
