@@ -36,7 +36,6 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 @interface CMDShortcutManager ()
 
 @property (nonatomic, assign) CMDShortcutMode mode;
-@property (nonatomic, assign) BOOL keyboardVisible;
 @property (nonatomic, strong) NSString *findSearchString;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) NSMutableArray *highlighterViews;
@@ -91,113 +90,29 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 #pragma mark - public
 
 - (void)handleKey:(CMDKeyboardKey)key withModifiers:(CMDKeyboardModifierKey)modifiers {
-    if ([self isEditingText]) {
-        if (key == CMDKeyboardKeyEscape) {
-            //allow escape to end editing of textfields etc
-            [self.keyWindow endEditing:YES];
-        }
-        return;
-    }
-    
+    BOOL isEditingText = [self isEditingText];
     if (key == CMDKeyboardKeyEscape) {
-        self.mode = CMDShortcutModeIdle;
-        UIView *firstResponder = self.firstResponder;
-
-        //dismiss alertview
-        if ([firstResponder isKindOfClass:UIAlertView.class]) {
-            UIAlertView *alertView = (id)firstResponder;
-            [alertView dismissWithClickedButtonIndex:alertView.cancelButtonIndex animated:YES];
-        }
-        return;
+        [self escape];
     }
 
-    NSString *keyString = [self.class stringFromkey:key];
+    //exit early if was editing text
+    if (isEditingText) return;
     
     if (self.mode == CMDShortcutModeIdle) {
         if (key == self.findHitZonesShortcutKey) {
-            self.mode = CMDShortcutModeFindHitZones;
-            self.findSearchString = @"";
-            [self.keyWindow.subviews.lastObject addSubview:self.overlayView];
-
-            //find all tapable views
-            [self highlightSubviewsOfView:self.keyWindow];
-
-            //attach hint strings
-            NSArray *hintStrings = [self generateHintStringsForViewCount:self.highlighterViews.count];
-            for (CMDHighlighterView *highlighterView in self.highlighterViews) {
-                highlighterView.hint = hintStrings[[self.highlighterViews indexOfObject:highlighterView]];
-                [highlighterView updateFrame];
-            }
+            [self activateFindHitZones];
         } else if (key == self.popNavigationItemShortcutKey) {
-            UINavigationBar *navigationBar = (id)[self.keyWindow cmd_findSubviewOfClass:UINavigationBar.class];
-
-            //cannot call [navigationBar popNavigationItemAnimated:YES] if navigationBar is within a UINavigationController
-            UINavigationController *navigationController = [navigationBar.delegate isKindOfClass:UINavigationController.class] ? navigationBar.delegate : nil ;
-            if (navigationController) {
-                [navigationController popViewControllerAnimated:YES];
-            } else {
-                [navigationBar popNavigationItemAnimated:YES];
-            }
+            [self popNavigationItem];
         } else if (key == CMDKeyboardKeyLeft ||
                    key == CMDKeyboardKeyRight ||
                    key == CMDKeyboardKeyUp ||
                    key == CMDKeyboardKeyDown) {
-            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reset) object:nil];
-            if (!self.currentScrollView) {
-                NSArray *scrollViews = [self.keyWindow cmd_findSubviewsOfClass:UIScrollView.class];
-
-                UIScrollView *largestScrollView = [scrollViews lastObject];
-                CGFloat currentLargestArea = largestScrollView.bounds.size.width * largestScrollView.bounds.size.height;
-                for (UIScrollView *scrollView in scrollViews) {
-                    CGFloat area = scrollView.bounds.size.width * scrollView.bounds.size.height;
-                    if (area > currentLargestArea) {
-                        currentLargestArea = area;
-                        largestScrollView = scrollView;
-                    }
-                }
-                self.currentScrollView = largestScrollView;
-                if (!self.currentScrollView) return;
-            }
-
-            CGPoint contentOffset = self.currentScrollView.contentOffset;
-            self.scrollSpeed++;
-            if (key == CMDKeyboardKeyDown) {
-                contentOffset.y += self.scrollSpeed;
-            }
-            if (key == CMDKeyboardKeyUp) {
-                contentOffset.y -= self.scrollSpeed;
-            }
-            if (key == CMDKeyboardKeyLeft) {
-                contentOffset.x -= self.scrollSpeed;
-            }
-            if (key == CMDKeyboardKeyRight) {
-                contentOffset.x += self.scrollSpeed;
-            }
-            contentOffset.x = MIN(MAX(0, contentOffset.x), MAX(self.currentScrollView.contentSize.width - CGRectGetWidth(self.currentScrollView.frame), 0));
-            contentOffset.y = MIN(MAX(0, contentOffset.y), MAX(self.currentScrollView.contentSize.height - CGRectGetHeight(self.currentScrollView.frame), 0));
-            [UIView animateWithDuration:0.05 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-                self.currentScrollView.contentOffset = contentOffset;
-            } completion:nil];
-            [self performSelector:@selector(reset) withObject:nil afterDelay:0.3];
+            [self scrollWithKey:key];
         }
     } else {
         if (self.mode == CMDShortcutModeFindHitZones) {
-            if (key == CMDKeyboardKeyBackspace) {
-                //deleting text
-                if (self.findSearchString.length) {
-                    self.findSearchString = [self.findSearchString substringToIndex:self.findSearchString.length-1];
-                } else {
-                    self.mode = CMDShortcutModeIdle;
-                    return;
-                }
-            } else {
-                if (keyString) {
-                    self.findSearchString = [self.findSearchString stringByAppendingString:keyString];
-                }
-            }
-
             //filter tapable views
-            [self filterHighlightedViews];
+            [self filterHighlightedViewsWithKey:key];
         }
     }
 }
@@ -206,7 +121,91 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     self.mode = CMDShortcutModeIdle;
 }
 
+- (void)escape {
+    if ([self isEditingText]) {
+        //allow escape to end editing of textfields etc
+        [self.keyWindow endEditing:YES];
+    }
 
+    if (self.mode == CMDShortcutModeIdle) {
+        UIView *firstResponder = self.firstResponder;
+
+        //dismiss alertview
+        if ([firstResponder isKindOfClass:UIAlertView.class]) {
+            UIAlertView *alertView = (id)firstResponder;
+            [alertView dismissWithClickedButtonIndex:alertView.cancelButtonIndex animated:YES];
+        }
+    }
+    self.mode = CMDShortcutModeIdle;
+}
+
+- (void)popNavigationItem {
+    UINavigationBar *navigationBar = (id)[self.keyWindow cmd_findSubviewOfClass:UINavigationBar.class];
+
+    //cannot call [navigationBar popNavigationItemAnimated:YES] if navigationBar is within a UINavigationController
+    UINavigationController *navigationController = [navigationBar.delegate isKindOfClass:UINavigationController.class] ? navigationBar.delegate : nil ;
+    if (navigationController) {
+        [navigationController popViewControllerAnimated:YES];
+    } else {
+        [navigationBar popNavigationItemAnimated:YES];
+    }
+}
+
+- (void)activateFindHitZones {
+    self.mode = CMDShortcutModeFindHitZones;
+    self.findSearchString = @"";
+    [self.keyWindow.subviews.lastObject addSubview:self.overlayView];
+
+    //find all tapable views
+    [self highlightSubviewsOfView:self.keyWindow];
+
+    //attach hint strings
+    NSArray *hintStrings = [self generateHintStringsForViewCount:self.highlighterViews.count];
+    for (CMDHighlighterView *highlighterView in self.highlighterViews) {
+        highlighterView.hint = hintStrings[[self.highlighterViews indexOfObject:highlighterView]];
+        [highlighterView updateFrame];
+    }
+}
+
+- (void)scrollWithKey:(CMDKeyboardKey)key {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reset) object:nil];
+    if (!self.currentScrollView) {
+        NSArray *scrollViews = [self.keyWindow cmd_findSubviewsOfClass:UIScrollView.class];
+
+        UIScrollView *largestScrollView = [scrollViews lastObject];
+        CGFloat currentLargestArea = largestScrollView.bounds.size.width * largestScrollView.bounds.size.height;
+        for (UIScrollView *scrollView in scrollViews) {
+            CGFloat area = scrollView.bounds.size.width * scrollView.bounds.size.height;
+            if (area > currentLargestArea) {
+                currentLargestArea = area;
+                largestScrollView = scrollView;
+            }
+        }
+        self.currentScrollView = largestScrollView;
+        if (!self.currentScrollView) return;
+    }
+
+    CGPoint contentOffset = self.currentScrollView.contentOffset;
+    self.scrollSpeed++;
+    if (key == CMDKeyboardKeyDown) {
+        contentOffset.y += self.scrollSpeed;
+    }
+    if (key == CMDKeyboardKeyUp) {
+        contentOffset.y -= self.scrollSpeed;
+    }
+    if (key == CMDKeyboardKeyLeft) {
+        contentOffset.x -= self.scrollSpeed;
+    }
+    if (key == CMDKeyboardKeyRight) {
+        contentOffset.x += self.scrollSpeed;
+    }
+    contentOffset.x = MIN(MAX(0, contentOffset.x), MAX(self.currentScrollView.contentSize.width - CGRectGetWidth(self.currentScrollView.frame), 0));
+    contentOffset.y = MIN(MAX(0, contentOffset.y), MAX(self.currentScrollView.contentSize.height - CGRectGetHeight(self.currentScrollView.frame), 0));
+    [UIView animateWithDuration:0.05 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        self.currentScrollView.contentOffset = contentOffset;
+    } completion:nil];
+    [self performSelector:@selector(reset) withObject:nil afterDelay:0.3];
+}
 
 #pragma mark - fake touch events
 
@@ -217,8 +216,24 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 #pragma mark - highlighting
 
-- (void)filterHighlightedViews {
+- (void)filterHighlightedViewsWithKey:(CMDKeyboardKey)key {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    
+    if (key == CMDKeyboardKeyBackspace) {
+        //deleting text
+        if (self.findSearchString.length) {
+            self.findSearchString = [self.findSearchString substringToIndex:self.findSearchString.length-1];
+        } else {
+            self.mode = CMDShortcutModeIdle;
+            return;
+        }
+    } else {
+        NSString *keyString = [self.class stringFromkey:key];
+        if (keyString) {
+            self.findSearchString = [self.findSearchString stringByAppendingString:keyString];
+        }
+    }
+
     BOOL hasMatches = NO;
     for (CMDHighlighterView *highlighterView in self.highlighterViews) {
         BOOL isMatch = [highlighterView highlightIfMatches:self.findSearchString];
