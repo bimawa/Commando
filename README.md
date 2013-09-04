@@ -40,6 +40,8 @@ int main(int argc, char *argv[]) {
 ```
 
 ## TODO
+- Improve heuristic for finding tapable views. ie filter out views that are obscured, userInteractionDisabled etc.
+- Add view debugging commands ala [DCIntrospect](https://github.com/logicreative/DCIntrospect-ARC)
 - Select specific UIScrollView to scroll
 - Tab between tapable UIViews ordered by view frame, then hit enter key to tap,
 - UIPanGestureRecognizer, UISwipeGestureRecognizer support
