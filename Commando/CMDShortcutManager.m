@@ -130,10 +130,14 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     if (self.mode == CMDShortcutModeIdle) {
         UIView *firstResponder = self.firstResponder;
 
-        //dismiss alertview
         if ([firstResponder isKindOfClass:UIAlertView.class]) {
+            //dismiss alertview
             UIAlertView *alertView = (id)firstResponder;
             [alertView dismissWithClickedButtonIndex:alertView.cancelButtonIndex animated:YES];
+        } else if ([firstResponder isKindOfClass:UIActionSheet.class]) {
+            //dismiss actionsheet
+            UIActionSheet *actionSheet = (id)firstResponder;
+            [actionSheet dismissWithClickedButtonIndex:actionSheet.cancelButtonIndex animated:YES];
         }
     }
     self.mode = CMDShortcutModeIdle;
