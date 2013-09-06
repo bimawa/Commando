@@ -29,9 +29,31 @@
 
 #pragma mark - view hierarchy helpers
 
-- (NSArray *)cmd_findSubviewsMatching:(BOOL(^)(UIView *subview))matching {
-    NSMutableArray *views = NSMutableArray.new;
+- (BOOL)cmd_withinScreenBounds {
+    return CGRectIntersectsRect([self convertRect:self.frame toView:self.window], self.window.bounds);
+}
+
+- (BOOL)cmd_isVisible {
+    return (!self.hidden && [self cmd_withinScreenBounds] && !CGSizeEqualToSize(self.bounds.size, CGSizeZero) && ([self isKindOfClass:UIWindow.class] || [self.superview cmd_isVisible]));
+}
+
+- (NSArray *)cmd_visibleSubviews {
+    NSMutableArray *subviews = NSMutableArray.new;
     for (UIView *subview in self.subviews) {
+        if ([subview cmd_isVisible]) {
+            [subviews addObject:subview];
+        }
+
+        [subviews addObjectsFromArray:[subview cmd_visibleSubviews]];
+    }
+    return subviews;
+}
+
+- (NSArray *)cmd_findSubviewsMatching:(BOOL(^)(UIView *subview))matching {
+    NSParameterAssert(matching);
+
+    NSMutableArray *views = NSMutableArray.new;
+    for (UIView *subview in self.cmd_visibleSubviews) {
         if (matching(subview)) {
             [views addObject:subview];
         }
@@ -42,7 +64,9 @@
 }
 
 - (UIView *)cmd_findSubviewMatching:(BOOL(^)(UIView *subview))matching {
-    for (UIView *subview in self.subviews) {
+    NSParameterAssert(matching);
+
+    for (UIView *subview in self.cmd_visibleSubviews) {
         if (matching(subview)) return subview;
 
         id result = [subview cmd_findSubviewMatching:matching];
