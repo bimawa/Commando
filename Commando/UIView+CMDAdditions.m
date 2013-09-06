@@ -29,12 +29,16 @@
 
 #pragma mark - view hierarchy helpers
 
+- (CGRect)cmd_boundsInWindowCoordinateSystem {
+    return [self.superview convertRect:self.frame toView:self.window];
+}
+
 - (BOOL)cmd_withinScreenBounds {
-    return CGRectIntersectsRect([self convertRect:self.frame toView:self.window], self.window.bounds);
+    return CGRectIntersectsRect(self.cmd_boundsInWindowCoordinateSystem, self.window.bounds);
 }
 
 - (BOOL)cmd_isVisible {
-    return (!self.hidden && [self cmd_withinScreenBounds] && !CGSizeEqualToSize(self.bounds.size, CGSizeZero) && ([self isKindOfClass:UIWindow.class] || [self.superview cmd_isVisible]));
+    return (!self.hidden && [self cmd_withinScreenBounds] && !CGSizeEqualToSize(self.bounds.size, CGSizeZero));
 }
 
 - (NSArray *)cmd_visibleSubviews {
@@ -43,8 +47,6 @@
         if ([subview cmd_isVisible]) {
             [subviews addObject:subview];
         }
-
-        [subviews addObjectsFromArray:[subview cmd_visibleSubviews]];
     }
     return subviews;
 }
