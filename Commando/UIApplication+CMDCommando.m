@@ -1,5 +1,5 @@
 //
-//  CMDCommandoApplication.m
+//  UIApplication+CMDCommando.m
 //  Commando
 //
 //  Created by Jonas Budelmann on 30/08/13.
