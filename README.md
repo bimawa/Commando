@@ -8,6 +8,7 @@ l33t commandos don't wear undies and never use the mouse!
 ####`esc` key
 - Commando roll out of UITextFields/UITextViews
 - Commando roll out of UIAlertviews
+- Commando roll out of UIActionSheets
 
 ####`f` key
 - Be a f'ng ninja. Find all tapable fields on screen - badass [vimium](http://vimium.github.io/) style

@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
   s.name     = 'Commando'
-  s.version  = '0.1.0'
+  s.version  = '0.1.1'
   s.license  = 'MIT'
   s.summary  = 'Navigate the iOS simulator with the keyboard. Ditch your mouse and GO FULL COMMANDO!'
   s.homepage = 'https://github.com/cloudkite/Commando'
   s.author   = { 'Jonas Budelmann' => 'jonas.budelmann@gmail.com' }
 
-  s.source   = { :git => 'https://github.com/cloudkite/Commando.git', :tag => 'v0.1.0' }
+  s.source   = { :git => 'https://github.com/cloudkite/Commando.git', :tag => 'v0.1.1' }
 
   s.description = %{
     Handy keyboard shortcuts for the iOS simulator.
