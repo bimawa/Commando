@@ -39,7 +39,6 @@ static void __attribute__((constructor)) CMDCommandoApplicationInstall() {
     Class UIApplicationClass = UIApplication.class;
 
     method_exchangeImplementations(class_getInstanceMethod(UIApplicationClass, @selector(sendEvent:)), class_getInstanceMethod(UIApplicationClass, @selector(cmd_sendEvent:)));
-
     method_exchangeImplementations(class_getInstanceMethod(UIApplicationClass, @selector(handleKeyUIEvent:)), class_getInstanceMethod(UIApplicationClass, @selector(cmd_handleKeyUIEvent:)));
 }
 
@@ -53,7 +52,6 @@ static void __attribute__((constructor)) CMDCommandoApplicationInstall() {
     } else {
         [[CMDShortcutManager sharedManager] handleKeyUp:event._keyCode withModifiers:event._modifierFlags];
     }
-    
 }
 
 - (void)cmd_sendEvent:(UIEvent *)event {
