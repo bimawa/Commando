@@ -9,11 +9,10 @@
 #import <UIKit/UIKit.h>
 
 #import "CMDAppDelegate.h"
-#import "CMDCommandoApplication.h"
 
 int main(int argc, char *argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, NSStringFromClass([CMDCommandoApplication class]), NSStringFromClass([CMDAppDelegate class]));
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([CMDAppDelegate class]));
     }
 }

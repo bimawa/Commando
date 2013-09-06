@@ -8,7 +8,7 @@
 
 #import "UITouch+CMDAdditions.h"
 
-#if (TARGET_IPHONE_SIMULATOR)
+#if CMD_COMMANDO_ENABLED
 
 typedef struct __GSEvent * GSEventRef;
 

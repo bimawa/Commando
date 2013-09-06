@@ -10,6 +10,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "CMDCommando.h"
+
 typedef NS_OPTIONS(NSUInteger, CMDKeyModifier) {
 	CMDKeyModifierNone = 0,
     CMDKeyModifierAlphaShift     = 1 << 16, //capslock

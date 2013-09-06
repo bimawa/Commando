@@ -13,7 +13,7 @@
 		DD0C5B7A17D098720052AE16 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DD0C5B7817D098720052AE16 /* InfoPlist.strings */; };
 		DD0C5B7C17D098720052AE16 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5B7B17D098720052AE16 /* main.m */; };
 		DD0C5B8017D098720052AE16 /* CMDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5B7F17D098720052AE16 /* CMDAppDelegate.m */; };
-		DD0C5B9217D09B340052AE16 /* CMDCommandoApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5B8E17D09B340052AE16 /* CMDCommandoApplication.m */; };
+		DD0C5B9217D09B340052AE16 /* UIApplication+CMDCommando.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5B8E17D09B340052AE16 /* UIApplication+CMDCommando.m */; };
 		DD0C5B9317D09B340052AE16 /* CMDShortcutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5B9117D09B340052AE16 /* CMDShortcutManager.m */; };
 		DD0C5B9B17D14C8B0052AE16 /* CMDRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5B9A17D14C8B0052AE16 /* CMDRootViewController.m */; };
 		DD0C5BA517D16B2D0052AE16 /* CMDHighlighterView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C5BA417D16B2D0052AE16 /* CMDHighlighterView.m */; };
@@ -28,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D0ECBAA217DA90F10075614E /* CMDCommando.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMDCommando.h; sourceTree = "<group>"; };
 		DD0C5B6C17D098720052AE16 /* CommandoExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CommandoExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD0C5B6F17D098720052AE16 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		DD0C5B7117D098720052AE16 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -38,8 +39,7 @@
 		DD0C5B7D17D098720052AE16 /* CommandoExample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommandoExample-Prefix.pch"; sourceTree = "<group>"; };
 		DD0C5B7E17D098720052AE16 /* CMDAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMDAppDelegate.h; sourceTree = "<group>"; };
 		DD0C5B7F17D098720052AE16 /* CMDAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMDAppDelegate.m; sourceTree = "<group>"; };
-		DD0C5B8D17D09B340052AE16 /* CMDCommandoApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDCommandoApplication.h; sourceTree = "<group>"; };
-		DD0C5B8E17D09B340052AE16 /* CMDCommandoApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDCommandoApplication.m; sourceTree = "<group>"; };
+		DD0C5B8E17D09B340052AE16 /* UIApplication+CMDCommando.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+CMDCommando.m"; sourceTree = "<group>"; };
 		DD0C5B9017D09B340052AE16 /* CMDShortcutManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDShortcutManager.h; sourceTree = "<group>"; };
 		DD0C5B9117D09B340052AE16 /* CMDShortcutManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDShortcutManager.m; sourceTree = "<group>"; };
 		DD0C5B9917D14C8B0052AE16 /* CMDRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDRootViewController.h; sourceTree = "<group>"; };
@@ -132,9 +132,9 @@
 		DD0C5B8C17D09B340052AE16 /* Commando */ = {
 			isa = PBXGroup;
 			children = (
+				D0ECBAA217DA90F10075614E /* CMDCommando.h */,
 				DD0C5BA017D158F30052AE16 /* CMDKeyboard.h */,
-				DD0C5B8D17D09B340052AE16 /* CMDCommandoApplication.h */,
-				DD0C5B8E17D09B340052AE16 /* CMDCommandoApplication.m */,
+				DD0C5B8E17D09B340052AE16 /* UIApplication+CMDCommando.m */,
 				DD0C5B9017D09B340052AE16 /* CMDShortcutManager.h */,
 				DD0C5B9117D09B340052AE16 /* CMDShortcutManager.m */,
 				DD0C5BA317D16B2D0052AE16 /* CMDHighlighterView.h */,
@@ -232,7 +232,7 @@
 			files = (
 				DD0C5B7C17D098720052AE16 /* main.m in Sources */,
 				DD0C5B8017D098720052AE16 /* CMDAppDelegate.m in Sources */,
-				DD0C5B9217D09B340052AE16 /* CMDCommandoApplication.m in Sources */,
+				DD0C5B9217D09B340052AE16 /* UIApplication+CMDCommando.m in Sources */,
 				DD0C5B9317D09B340052AE16 /* CMDShortcutManager.m in Sources */,
 				DD3C0F6A17D4444100037FBE /* UITouch+CMDAdditions.m in Sources */,
 				DD0C5B9B17D14C8B0052AE16 /* CMDRootViewController.m in Sources */,

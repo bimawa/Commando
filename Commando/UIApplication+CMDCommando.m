@@ -1,25 +1,18 @@
 //
-//  CMDCommandoApplication.m
+//  UIApplication+CMDCommando.m
 //  Commando
 //
 //  Created by Jonas Budelmann on 30/08/13.
 //  Copyright (c) 2013 cloudling. All rights reserved.
 //
 
-#import "CMDCommandoApplication.h"
+#import "CMDCommando.h"
 
-#if !(TARGET_IPHONE_SIMULATOR)
-
-//if running on device do nothing
-@implementation CMDCommandoApplication
-
-@end
-
-#else
-
-//following code only runs on simulator
+#if CMD_COMMANDO_ENABLED
 
 #import "CMDShortcutManager.h"
+#import <objc/runtime.h>
+
 #define GSEVENT_TYPE 2
 #define GSEVENT_FLAGS 12
 #define GSEVENT_TYPE_KEYDOWN 10
@@ -42,25 +35,27 @@
 @property (nonatomic, readonly) BOOL _isKeyDown;
 @end
 
-@interface UIApplication ()
-- (void)handleKeyUIEvent:(UIPhysicalKeyboardEvent *)event;
-@end
+static void __attribute__((constructor)) CMDCommandoApplicationInstall() {
+    Class UIApplicationClass = UIApplication.class;
 
-@implementation CMDCommandoApplication
+    method_exchangeImplementations(class_getInstanceMethod(UIApplicationClass, @selector(sendEvent:)), class_getInstanceMethod(UIApplicationClass, @selector(cmd_sendEvent:)));
+    method_exchangeImplementations(class_getInstanceMethod(UIApplicationClass, @selector(handleKeyUIEvent:)), class_getInstanceMethod(UIApplicationClass, @selector(cmd_handleKeyUIEvent:)));
+}
 
-- (void)handleKeyUIEvent:(UIPhysicalKeyboardEvent *)event {
-    [super handleKeyUIEvent:event];
+@implementation UIApplication (CMDCommandoApplication)
+
+- (void)cmd_handleKeyUIEvent:(UIPhysicalKeyboardEvent *)event {
+    [self cmd_handleKeyUIEvent:event];
 
     if (event._isKeyDown) {
         [[CMDShortcutManager sharedManager] handleKeyDown:event._keyCode withModifiers:event._modifierFlags];
     } else {
         [[CMDShortcutManager sharedManager] handleKeyUp:event._keyCode withModifiers:event._modifierFlags];
     }
-
 }
 
-- (void)sendEvent:(UIEvent *)event {
-    [super sendEvent:event];
+- (void)cmd_sendEvent:(UIEvent *)event {
+    [self cmd_sendEvent:event];
 
     // Check to see if there was a touch event
     NSSet *allTouches = [event allTouches];

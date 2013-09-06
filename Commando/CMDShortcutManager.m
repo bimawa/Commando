@@ -8,19 +8,7 @@
 
 #import "CMDShortcutManager.h"
 
-#if !(TARGET_IPHONE_SIMULATOR)
-
-//if running on device do nothing
-@implementation CMDShortcutManager
-
-+ (instancetype)sharedManager { return nil; }
-- (void)handleKeyDown:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {}
-- (void)handleKeyUp:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {}
-- (void)reset {}
-
-@end
-
-#else
+#if CMD_COMMANDO_ENABLED
 
 #import "CMDHighlighterView.h"
 #import "UITouch+CMDAdditions.h"
