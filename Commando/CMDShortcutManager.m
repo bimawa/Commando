@@ -130,6 +130,9 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     if (self.mode == CMDShortcutModeIdle) {
         UIView *firstResponder = self.firstResponder;
 
+        //in iOS7 alertviews are no longer keyWindow
+        firstResponder = firstResponder ?: [NSClassFromString(@"_UIAlertManager") performSelector:@selector(visibleAlert)];
+
         if ([firstResponder isKindOfClass:UIAlertView.class]) {
             //dismiss alertview
             UIAlertView *alertView = (id)firstResponder;
