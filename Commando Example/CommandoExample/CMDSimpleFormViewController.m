@@ -19,6 +19,12 @@
     return self;
 }
 
+#ifdef __IPHONE_7_0
+- (UIRectEdge)edgesForExtendedLayout {
+    return UIRectEdgeNone;
+}
+#endif
+
 - (void)viewDidAppear:(BOOL)animated {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Test" message:@"Hello" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ok", nil];
     [alertView show];

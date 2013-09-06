@@ -14,7 +14,7 @@
 @implementation CMDShortcutManager
 
 + (instancetype)sharedManager { return nil; }
-- (void)handleKey:(CMDKeyboardKey)key withModifiers:(CMDKeyboardModifierKey)modifiers {}
+- (void)handleKey:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {}
 - (void)reset {}
 
 @end
@@ -65,8 +65,8 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     self.highlighterViews = NSMutableArray.new;
 
     //defaults
-    self.popNavigationItemShortcutKey = CMDKeyboardKeyBackspace;
-    self.findHitZonesShortcutKey = CMDKeyboardKeyF;
+    self.popNavigationItemShortcutKey = CMDKeyInputCodeBackspace;
+    self.findHitZonesShortcutKey = CMDKeyInputCodeF;
     self.findHitZonesHighlightColor = UIColor.greenColor;
     
     // listen for device orientation changes to reset mode
@@ -89,9 +89,9 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 #pragma mark - public
 
-- (void)handleKey:(CMDKeyboardKey)key withModifiers:(CMDKeyboardModifierKey)modifiers {
+- (void)handleKey:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {
     BOOL isEditingText = [self isEditingText];
-    if (key == CMDKeyboardKeyEscape) {
+    if (key == CMDKeyInputCodeEscape) {
         [self escape];
     }
 
@@ -103,10 +103,10 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             [self activateFindHitZones];
         } else if (key == self.popNavigationItemShortcutKey) {
             [self popNavigationItem];
-        } else if (key == CMDKeyboardKeyLeft ||
-                   key == CMDKeyboardKeyRight ||
-                   key == CMDKeyboardKeyUp ||
-                   key == CMDKeyboardKeyDown) {
+        } else if (key == CMDKeyInputCodeLeft ||
+                   key == CMDKeyInputCodeRight ||
+                   key == CMDKeyInputCodeUp ||
+                   key == CMDKeyInputCodeDown) {
             [self scrollWithKey:key];
         }
     } else {
@@ -201,7 +201,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 	}
 }
 
-- (void)scrollWithKey:(CMDKeyboardKey)key {
+- (void)scrollWithKey:(CMDKeyInputCode)key {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reset) object:nil];
     if (!self.currentScrollView) {
         NSArray *scrollViews = (id)[self.keyWindow cmd_findSubviewsMatching:^BOOL(UIView *subview) {
@@ -223,16 +223,16 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
     CGPoint contentOffset = self.currentScrollView.contentOffset;
     self.scrollSpeed++;
-    if (key == CMDKeyboardKeyDown) {
+    if (key == CMDKeyInputCodeDown) {
         contentOffset.y += self.scrollSpeed;
     }
-    if (key == CMDKeyboardKeyUp) {
+    if (key == CMDKeyInputCodeUp) {
         contentOffset.y -= self.scrollSpeed;
     }
-    if (key == CMDKeyboardKeyLeft) {
+    if (key == CMDKeyInputCodeLeft) {
         contentOffset.x -= self.scrollSpeed;
     }
-    if (key == CMDKeyboardKeyRight) {
+    if (key == CMDKeyInputCodeRight) {
         contentOffset.x += self.scrollSpeed;
     }
     contentOffset.x = MIN(MAX(0, contentOffset.x), MAX(self.currentScrollView.contentSize.width - CGRectGetWidth(self.currentScrollView.frame), 0));
@@ -252,10 +252,10 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 #pragma mark - highlighting
 
-- (void)filterHighlightedViewsWithKey:(CMDKeyboardKey)key {
+- (void)filterHighlightedViewsWithKey:(CMDKeyInputCode)key {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
-    if (key == CMDKeyboardKeyBackspace) {
+    if (key == CMDKeyInputCodeBackspace) {
         //deleting text
         if (self.findSearchString.length) {
             self.findSearchString = [self.findSearchString substringToIndex:self.findSearchString.length-1];
@@ -396,45 +396,45 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     return NO;
 }
 
-+ (NSString *)stringFromkey:(CMDKeyboardKey)key {
++ (NSString *)stringFromkey:(CMDKeyInputCode)key {
     //alphabet
-    if (key == CMDKeyboardKeyA) return @"a";
-    if (key == CMDKeyboardKeyB) return @"b";
-    if (key == CMDKeyboardKeyC) return @"c";
-    if (key == CMDKeyboardKeyD) return @"d";
-    if (key == CMDKeyboardKeyE) return @"e";
-    if (key == CMDKeyboardKeyF) return @"f";
-    if (key == CMDKeyboardKeyG) return @"g";
-    if (key == CMDKeyboardKeyH) return @"h";
-    if (key == CMDKeyboardKeyI) return @"i";
-    if (key == CMDKeyboardKeyJ) return @"j";
-    if (key == CMDKeyboardKeyK) return @"k";
-    if (key == CMDKeyboardKeyL) return @"l";
-    if (key == CMDKeyboardKeyM) return @"m";
-    if (key == CMDKeyboardKeyN) return @"n";
-    if (key == CMDKeyboardKeyO) return @"o";
-    if (key == CMDKeyboardKeyP) return @"p";
-    if (key == CMDKeyboardKeyQ) return @"q";
-    if (key == CMDKeyboardKeyR) return @"r";
-    if (key == CMDKeyboardKeyS) return @"s";
-    if (key == CMDKeyboardKeyT) return @"t";
-    if (key == CMDKeyboardKeyU) return @"u";
-    if (key == CMDKeyboardKeyW) return @"w";
-    if (key == CMDKeyboardKeyX) return @"x";
-    if (key == CMDKeyboardKeyY) return @"y";
-    if (key == CMDKeyboardKeyZ) return @"z";
+    if (key == CMDKeyInputCodeA) return @"a";
+    if (key == CMDKeyInputCodeB) return @"b";
+    if (key == CMDKeyInputCodeC) return @"c";
+    if (key == CMDKeyInputCodeD) return @"d";
+    if (key == CMDKeyInputCodeE) return @"e";
+    if (key == CMDKeyInputCodeF) return @"f";
+    if (key == CMDKeyInputCodeG) return @"g";
+    if (key == CMDKeyInputCodeH) return @"h";
+    if (key == CMDKeyInputCodeI) return @"i";
+    if (key == CMDKeyInputCodeJ) return @"j";
+    if (key == CMDKeyInputCodeK) return @"k";
+    if (key == CMDKeyInputCodeL) return @"l";
+    if (key == CMDKeyInputCodeM) return @"m";
+    if (key == CMDKeyInputCodeN) return @"n";
+    if (key == CMDKeyInputCodeO) return @"o";
+    if (key == CMDKeyInputCodeP) return @"p";
+    if (key == CMDKeyInputCodeQ) return @"q";
+    if (key == CMDKeyInputCodeR) return @"r";
+    if (key == CMDKeyInputCodeS) return @"s";
+    if (key == CMDKeyInputCodeT) return @"t";
+    if (key == CMDKeyInputCodeU) return @"u";
+    if (key == CMDKeyInputCodeW) return @"w";
+    if (key == CMDKeyInputCodeX) return @"x";
+    if (key == CMDKeyInputCodeY) return @"y";
+    if (key == CMDKeyInputCodeZ) return @"z";
 
     //numeric
-    if (key == CMDKeyboardKey1) return @"1";
-    if (key == CMDKeyboardKey2) return @"2";
-    if (key == CMDKeyboardKey3) return @"3";
-    if (key == CMDKeyboardKey4) return @"4";
-    if (key == CMDKeyboardKey5) return @"5";
-    if (key == CMDKeyboardKey6) return @"6";
-    if (key == CMDKeyboardKey7) return @"7";
-    if (key == CMDKeyboardKey8) return @"8";
-    if (key == CMDKeyboardKey9) return @"9";
-    if (key == CMDKeyboardKey0) return @"0";
+    if (key == CMDKeyInputCode1) return @"1";
+    if (key == CMDKeyInputCode2) return @"2";
+    if (key == CMDKeyInputCode3) return @"3";
+    if (key == CMDKeyInputCode4) return @"4";
+    if (key == CMDKeyInputCode5) return @"5";
+    if (key == CMDKeyInputCode6) return @"6";
+    if (key == CMDKeyInputCode7) return @"7";
+    if (key == CMDKeyInputCode8) return @"8";
+    if (key == CMDKeyInputCode9) return @"9";
+    if (key == CMDKeyInputCode0) return @"0";
 
     return nil;
 }

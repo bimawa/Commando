@@ -11,14 +11,14 @@
 
 @interface CMDShortcutManager : NSObject
 
-@property (nonatomic, assign) CMDKeyboardKey popNavigationItemShortcutKey; //defaults to CMDKeyboardKeyBackspace
+@property (nonatomic, assign) CMDKeyInputCode popNavigationItemShortcutKey; //defaults to CMDKeyInputCodeBackspace
 
-@property (nonatomic, assign) CMDKeyboardKey findHitZonesShortcutKey; //defaults to CMDKeyboardKeyF
+@property (nonatomic, assign) CMDKeyInputCode findHitZonesShortcutKey; //defaults to CMDKeyInputCodeF
 @property (nonatomic, strong) UIColor *findHitZonesHighlightColor; //defaults to greenColor
 
 + (instancetype)sharedManager;
 
-- (void)handleKey:(CMDKeyboardKey)key withModifiers:(CMDKeyboardModifierKey)modifiers;
+- (void)handleKey:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers;
 - (void)reset;
 
 @end

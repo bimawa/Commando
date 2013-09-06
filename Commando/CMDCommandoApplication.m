@@ -24,13 +24,38 @@
 #define GSEVENT_FLAGS 12
 #define GSEVENT_TYPE_KEYDOWN 10
 
-@interface UIEvent (private)
-
+@interface UIEvent ()
 - (int *)_gsEvent;
+@end
 
+// We need this to build up to the keyboard event
+@interface UIInternalEvent : UIEvent
+@end
+
+@interface UIPhysicalButtonsEvent : UIInternalEvent
+@end
+
+@interface UIPhysicalKeyboardEvent : UIPhysicalButtonsEvent
+@property (nonatomic, readonly) long _keyCode;
+@property (nonatomic, assign) int _modifierFlags;
+@property (nonatomic, strong) NSString *_unmodifiedInput;
+@property (nonatomic, readonly) BOOL _isKeyDown;
+@end
+
+@interface UIApplication ()
+- (void)handleKeyUIEvent:(UIPhysicalKeyboardEvent *)event;
 @end
 
 @implementation CMDCommandoApplication
+
+- (void)handleKeyUIEvent:(UIPhysicalKeyboardEvent *)event {
+    [super handleKeyUIEvent:event];
+
+    if (event._isKeyDown) {
+        [[CMDShortcutManager sharedManager] handleKey:event._keyCode withModifiers:event._modifierFlags];
+    }
+
+}
 
 - (void)sendEvent:(UIEvent *)event {
     [super sendEvent:event];
@@ -56,7 +81,7 @@
     int eventFlags = eventMemory[GSEVENT_FLAGS];
     int tmp = eventMemory[15];
     UniChar *keycode = (UniChar *)&tmp;
-    CMDKeyboardKey key = keycode[0];
+    CMDKeyInputCode key = keycode[0];
 
     [[CMDShortcutManager sharedManager] handleKey:key withModifiers:eventFlags];
 }
