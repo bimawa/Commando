@@ -12,8 +12,6 @@
 
 #if CMD_COMMANDO_ENABLED
 
-#import "CMDKeyboard.h"
-
 @interface CMDShortcutManager : NSObject
 
 @property (nonatomic, assign) CMDKeyInputCode popNavigationItemShortcutKey; //defaults to CMDKeyInputCodeBackspace

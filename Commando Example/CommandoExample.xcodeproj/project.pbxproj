@@ -44,7 +44,6 @@
 		DD0C5B9117D09B340052AE16 /* CMDShortcutManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDShortcutManager.m; sourceTree = "<group>"; };
 		DD0C5B9917D14C8B0052AE16 /* CMDRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDRootViewController.h; sourceTree = "<group>"; };
 		DD0C5B9A17D14C8B0052AE16 /* CMDRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDRootViewController.m; sourceTree = "<group>"; };
-		DD0C5BA017D158F30052AE16 /* CMDKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDKeyboard.h; sourceTree = "<group>"; };
 		DD0C5BA317D16B2D0052AE16 /* CMDHighlighterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDHighlighterView.h; sourceTree = "<group>"; };
 		DD0C5BA417D16B2D0052AE16 /* CMDHighlighterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDHighlighterView.m; sourceTree = "<group>"; };
 		DD0C5BA617D16C170052AE16 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -133,7 +132,6 @@
 			isa = PBXGroup;
 			children = (
 				D0ECBAA217DA90F10075614E /* CMDCommando.h */,
-				DD0C5BA017D158F30052AE16 /* CMDKeyboard.h */,
 				DD0C5B8E17D09B340052AE16 /* UIApplication+CMDCommando.m */,
 				DD0C5B9017D09B340052AE16 /* CMDShortcutManager.h */,
 				DD0C5B9117D09B340052AE16 /* CMDShortcutManager.m */,
