@@ -18,7 +18,8 @@
 
 + (instancetype)sharedManager;
 
-- (void)handleKey:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers;
+- (void)handleKeyDown:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers;
+- (void)handleKeyUp:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers;
 - (void)reset;
 
 @end

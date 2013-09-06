@@ -52,7 +52,9 @@
     [super handleKeyUIEvent:event];
 
     if (event._isKeyDown) {
-        [[CMDShortcutManager sharedManager] handleKey:event._keyCode withModifiers:event._modifierFlags];
+        [[CMDShortcutManager sharedManager] handleKeyDown:event._keyCode withModifiers:event._modifierFlags];
+    } else {
+        [[CMDShortcutManager sharedManager] handleKeyUp:event._keyCode withModifiers:event._modifierFlags];
     }
 
 }
@@ -64,7 +66,7 @@
     NSSet *allTouches = [event allTouches];
     if ([allTouches count] > 0) {
         UITouchPhase phase = ((UITouch *)[allTouches anyObject]).phase;
-        if (phase == UITouchPhaseBegan) {
+        if (phase == UITouchPhaseBegan || phase == UITouchPhaseMoved) {
             [[CMDShortcutManager sharedManager] reset];
             return;
 		}
@@ -83,7 +85,7 @@
     UniChar *keycode = (UniChar *)&tmp;
     CMDKeyInputCode key = keycode[0];
 
-    [[CMDShortcutManager sharedManager] handleKey:key withModifiers:eventFlags];
+    [[CMDShortcutManager sharedManager] handleKeyDown:key withModifiers:eventFlags];
 }
 
 @end

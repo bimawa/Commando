@@ -14,7 +14,8 @@
 @implementation CMDShortcutManager
 
 + (instancetype)sharedManager { return nil; }
-- (void)handleKey:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {}
+- (void)handleKeyDown:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {}
+- (void)handleKeyUp:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {}
 - (void)reset {}
 
 @end
@@ -28,6 +29,15 @@
 static double const kCMDFindCompleteDelay = 0.3;
 static NSString* const kCMDFindHintCharacters = @"sadfjklewcmpgh";
 
+NSUInteger CMDKeyDeviceSystemMajorVersion() {
+    static NSUInteger _deviceSystemMajorVersion = -1;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _deviceSystemMajorVersion = [[[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."] objectAtIndex:0] intValue];
+    });
+    return _deviceSystemMajorVersion;
+}
+
 typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 	CMDShortcutModeIdle,
     CMDShortcutModeFindHitZones
@@ -36,11 +46,13 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 @interface CMDShortcutManager ()
 
 @property (nonatomic, assign) CMDShortcutMode mode;
+@property (nonatomic, assign) CMDKeyInputCode currentKeyDown;
 @property (nonatomic, strong) NSString *findSearchString;
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) NSMutableArray *highlighterViews;
 @property (nonatomic, weak) UIScrollView *currentScrollView;
 @property (nonatomic, assign) CGFloat scrollSpeed;
+@property (nonatomic, strong) NSTimer *scrollTimer;
 
 @end
 
@@ -59,6 +71,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     self = [super init];
     if (!self) return nil;
 
+    self.currentKeyDown = NSNotFound;
     self.overlayView = UIView.new;
     self.overlayView.userInteractionEnabled = NO;
     self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -89,7 +102,12 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 #pragma mark - public
 
-- (void)handleKey:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {
+- (void)handleKeyDown:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {
+    BOOL newKey = self.currentKeyDown != key;
+    self.currentKeyDown = key;
+    [self.scrollTimer invalidate];
+    self.scrollTimer = nil;
+
     BOOL isEditingText = [self isEditingText];
     if (key == CMDKeyInputCodeEscape) {
         [self escape];
@@ -103,17 +121,32 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             [self activateFindHitZones];
         } else if (key == self.popNavigationItemShortcutKey) {
             [self popNavigationItem];
-        } else if (key == CMDKeyInputCodeLeft ||
-                   key == CMDKeyInputCodeRight ||
-                   key == CMDKeyInputCodeUp ||
-                   key == CMDKeyInputCodeDown) {
+        } else if ([self isScrollKey:key]) {
+            if (newKey) {
+                self.scrollSpeed = 1;
+            }
             [self scrollWithKey:key];
+            if (CMDKeyDeviceSystemMajorVersion() > 6) {
+                self.scrollTimer = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(repeatKey) userInfo:nil repeats:YES];
+            }
         }
     } else {
         if (self.mode == CMDShortcutModeFindHitZones) {
             //filter tapable views
             [self filterHighlightedViewsWithKey:key];
         }
+    }
+}
+
+- (void)handleKeyUp:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {
+    self.currentKeyDown = NSNotFound;
+    [self.scrollTimer invalidate];
+    self.scrollTimer = nil;
+}
+
+- (void)repeatKey {
+    if ([self isScrollKey:self.currentKeyDown]) {
+        [self scrollWithKey:self.currentKeyDown];f
     }
 }
 
@@ -202,6 +235,13 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
         i++;
 	}
+}
+
+- (BOOL)isScrollKey:(CMDKeyInputCode)key {
+    return (key == CMDKeyInputCodeLeft ||
+            key == CMDKeyInputCodeRight ||
+            key == CMDKeyInputCodeUp ||
+            key == CMDKeyInputCodeDown);
 }
 
 - (void)scrollWithKey:(CMDKeyInputCode)key {
