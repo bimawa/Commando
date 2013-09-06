@@ -146,7 +146,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 - (void)repeatKey {
     if ([self isScrollKey:self.currentKeyDown]) {
-        [self scrollWithKey:self.currentKeyDown];f
+        [self scrollWithKey:self.currentKeyDown];
     }
 }
 
