@@ -9,7 +9,7 @@
 #import "UIView+CMDAdditions.h"
 #import "UITouch+CMDAdditions.h"
 
-#if (TARGET_IPHONE_SIMULATOR)
+#if CMD_COMMANDO_ENABLED
 
 @implementation UIView (CMDAdditions)
 

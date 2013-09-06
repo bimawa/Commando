@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-#if (TARGET_IPHONE_SIMULATOR)
+#import "CMDCommando.h"
+
+#if CMD_COMMANDO_ENABLED
 
 @interface UITouch (CMDAdditions)
 

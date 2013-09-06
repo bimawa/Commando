@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+#import "CMDCommando.h"
+
+#if CMD_COMMANDO_ENABLED
+
 @interface CMDHighlighterView : UIView
 
 @property (nonatomic, weak) UIView *targetView;
@@ -18,3 +22,5 @@
 - (BOOL)highlightIfMatches:(NSString *)match;
 
 @end
+
+#endif

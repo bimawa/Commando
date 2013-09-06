@@ -9,6 +9,8 @@
 #import "CMDHighlighterView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#if CMD_COMMANDO_ENABLED
+
 @interface CMDHighlighterView ()
 
 @property (nonatomic, strong) UILabel *hintLabel;
@@ -77,3 +79,5 @@
 }
 
 @end
+
+#endif

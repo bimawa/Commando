@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 cloudling. All rights reserved.
 //
 
-#import "CMDCommandoApplication.h"
+#import "CMDCommando.h"
 
-#if CMDCommandoEnabled
+#if CMD_COMMANDO_ENABLED
 
 #import "CMDShortcutManager.h"
 #import <objc/runtime.h>

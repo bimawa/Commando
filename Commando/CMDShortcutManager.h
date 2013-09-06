@@ -7,6 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#import "CMDCommando.h"
+
+#if CMD_COMMANDO_ENABLED
+
 #import "CMDKeyboard.h"
 
 @interface CMDShortcutManager : NSObject
@@ -23,3 +28,5 @@
 - (void)reset;
 
 @end
+
+#endif
