@@ -8,6 +8,4 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CMDCommandoApplication : UIApplication
-
-@end
+#define CMDCommandoEnabled TARGET_IPHONE_SIMULATOR

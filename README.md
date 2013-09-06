@@ -25,20 +25,8 @@ Use the wonderful [CocoaPods](http://github.com/CocoaPods/CocoaPods).
 In your Podfile
 >`pod 'Commando'`
 
-To listen to keyboard events your app must use the `CMDCommandoApplication` custom UIApplication subclass. You can reliably leave that in for release as any non-simulator builds will only compile to an empty UIApplication subclass.
-In your `main.m` :
-
-``` objc
-#import "CMDCommandoApplication.h"
-
-int main(int argc, char *argv[]) {
-   @autoreleasepool {
-       return UIApplicationMain(argc, argv,
-           NSStringFromClass([CMDCommandoApplication class]),
-           NSStringFromClass([MYAppDelegate class]));
-   }
-}
-```
+You don't need to do anything else because Commando will be listening for keyboard events on the simulator.
+Also you don't need to worry about this code shipping in your production app, because none of it is compiled on device builds.
 
 ## TODO
 - Improve heuristic for finding tapable views. ie filter out views that are obscured, userInteractionDisabled etc.
