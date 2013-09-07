@@ -41,21 +41,11 @@
     return (!self.hidden && [self cmd_withinScreenBounds] && !CGSizeEqualToSize(self.bounds.size, CGSizeZero));
 }
 
-- (NSArray *)cmd_visibleSubviews {
-    NSMutableArray *subviews = NSMutableArray.new;
-    for (UIView *subview in self.subviews) {
-        if ([subview cmd_isVisible]) {
-            [subviews addObject:subview];
-        }
-    }
-    return subviews;
-}
-
 - (NSArray *)cmd_findSubviewsMatching:(BOOL(^)(UIView *subview))matching {
     NSParameterAssert(matching);
 
     NSMutableArray *views = NSMutableArray.new;
-    for (UIView *subview in self.cmd_visibleSubviews) {
+    for (UIView *subview in self.subviews) {
         if (matching(subview)) {
             [views addObject:subview];
         }
@@ -68,7 +58,7 @@
 - (UIView *)cmd_findSubviewMatching:(BOOL(^)(UIView *subview))matching {
     NSParameterAssert(matching);
 
-    for (UIView *subview in self.cmd_visibleSubviews) {
+    for (UIView *subview in self.subviews) {
         if (matching(subview)) return subview;
 
         id result = [subview cmd_findSubviewMatching:matching];
