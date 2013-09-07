@@ -29,7 +29,21 @@
 
 #pragma mark - view hierarchy helpers
 
+- (CGRect)cmd_boundsInWindowCoordinateSystem {
+    return [self.superview convertRect:self.frame toView:self.window];
+}
+
+- (BOOL)cmd_withinScreenBounds {
+    return CGRectIntersectsRect(self.cmd_boundsInWindowCoordinateSystem, self.window.bounds);
+}
+
+- (BOOL)cmd_isVisible {
+    return (!self.hidden && [self cmd_withinScreenBounds] && !CGSizeEqualToSize(self.bounds.size, CGSizeZero));
+}
+
 - (NSArray *)cmd_findSubviewsMatching:(BOOL(^)(UIView *subview))matching {
+    NSParameterAssert(matching);
+
     NSMutableArray *views = NSMutableArray.new;
     for (UIView *subview in self.subviews) {
         if (matching(subview)) {
@@ -42,6 +56,8 @@
 }
 
 - (UIView *)cmd_findSubviewMatching:(BOOL(^)(UIView *subview))matching {
+    NSParameterAssert(matching);
+
     for (UIView *subview in self.subviews) {
         if (matching(subview)) return subview;
 

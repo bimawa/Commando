@@ -16,6 +16,8 @@
 
 - (void)cmd_fireTapEvents;
 
+- (BOOL)cmd_isVisible;
+
 - (NSArray *)cmd_findSubviewsMatching:(BOOL(^)(UIView *subview))matching;
 - (UIView *)cmd_findSubviewMatching:(BOOL(^)(UIView *subview))matching;
 

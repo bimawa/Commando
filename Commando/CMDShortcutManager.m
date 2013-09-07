@@ -190,6 +190,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     //find all tapable views
     NSArray *tapableViews = [self.keyWindow cmd_findSubviewsMatching:^BOOL(UIView *view) {
         if (view == self.overlayView) return NO;
+        if (![view cmd_isVisible]) return NO;
         if ([view isKindOfClass:UIControl.class]) return YES;
         if ([view isKindOfClass:UITableViewCell.class]) return YES;
         if ([view isKindOfClass:UICollectionViewCell.class]) return YES;
