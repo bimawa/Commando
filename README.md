@@ -23,7 +23,7 @@ l33t commandos don't wear undies and never use the mouse!
 Use the wonderful [CocoaPods](http://github.com/CocoaPods/CocoaPods).
 
 In your Podfile
->`pod 'Commando', :git => 'https://github.com/cloudkite/Commando.git'`
+>`pod 'Commando'`
 
 You don't need to do anything else because Commando will be automatically listening for keyboard events in the simulator.
 Also you don't need to worry about this code shipping in your production app, because none of it is compiled on device builds.
