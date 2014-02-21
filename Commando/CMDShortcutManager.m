@@ -240,11 +240,11 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
             }]];
         }
 
-        UIScrollView *largestScrollView = [scrollViews lastObject];
-        CGFloat currentLargestArea = largestScrollView.bounds.size.width * largestScrollView.bounds.size.height;
+        UIScrollView *largestScrollView = nil;
+        CGFloat currentLargestArea = 0;
         for (UIScrollView *scrollView in scrollViews) {
-            CGFloat area = scrollView.bounds.size.width * scrollView.bounds.size.height;
-            if (area > currentLargestArea) {
+            CGFloat area = scrollView.contentSize.width * scrollView.contentSize.height;
+            if (scrollView.scrollEnabled && scrollView.window && !scrollView.hidden && area > currentLargestArea) {
                 currentLargestArea = area;
                 largestScrollView = scrollView;
             }
