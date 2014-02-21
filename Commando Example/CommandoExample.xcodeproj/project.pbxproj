@@ -24,6 +24,9 @@
 		DDB6094517D33ED60082B3DA /* CMDCatalogCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB6094417D33ED60082B3DA /* CMDCatalogCell.m */; };
 		DDB6094817D34C360082B3DA /* CMDSimpleGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB6094717D34C360082B3DA /* CMDSimpleGridViewController.m */; };
 		DDB6094A17D34D570082B3DA /* CMDSimpleFormViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DDB6094917D34D570082B3DA /* CMDSimpleFormViewController.xib */; };
+		DDE5831B18B7232E009D4844 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDE5831A18B7232E009D4844 /* Default-568h@2x.png */; };
+		DDE5831E18B72444009D4844 /* CMDOverlayWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE5831D18B72444009D4844 /* CMDOverlayWindow.m */; };
+		DDE5832118B72460009D4844 /* CMDOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE5832018B72460009D4844 /* CMDOverlayController.m */; };
 		DDF4495717D4A83800C529B6 /* UIView+CMDAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DDF4495617D4A83800C529B6 /* UIView+CMDAdditions.m */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +61,11 @@
 		DDB6094617D34C360082B3DA /* CMDSimpleGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDSimpleGridViewController.h; sourceTree = "<group>"; };
 		DDB6094717D34C360082B3DA /* CMDSimpleGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDSimpleGridViewController.m; sourceTree = "<group>"; };
 		DDB6094917D34D570082B3DA /* CMDSimpleFormViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CMDSimpleFormViewController.xib; sourceTree = "<group>"; };
+		DDE5831A18B7232E009D4844 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		DDE5831C18B72444009D4844 /* CMDOverlayWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDOverlayWindow.h; sourceTree = "<group>"; };
+		DDE5831D18B72444009D4844 /* CMDOverlayWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDOverlayWindow.m; sourceTree = "<group>"; };
+		DDE5831F18B72460009D4844 /* CMDOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDOverlayController.h; sourceTree = "<group>"; };
+		DDE5832018B72460009D4844 /* CMDOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDOverlayController.m; sourceTree = "<group>"; };
 		DDF4495517D4A83800C529B6 /* UIView+CMDAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+CMDAdditions.h"; sourceTree = "<group>"; };
 		DDF4495617D4A83800C529B6 /* UIView+CMDAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+CMDAdditions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,6 +88,7 @@
 		DD0C5B6317D098720052AE16 = {
 			isa = PBXGroup;
 			children = (
+				DDE5831A18B7232E009D4844 /* Default-568h@2x.png */,
 				DD0C5B8C17D09B340052AE16 /* Commando */,
 				DD0C5B7517D098720052AE16 /* CommandoExample */,
 				DD0C5B6E17D098720052AE16 /* Frameworks */,
@@ -141,6 +150,10 @@
 				DD3C0F6917D4444100037FBE /* UITouch+CMDAdditions.m */,
 				DDF4495517D4A83800C529B6 /* UIView+CMDAdditions.h */,
 				DDF4495617D4A83800C529B6 /* UIView+CMDAdditions.m */,
+				DDE5831C18B72444009D4844 /* CMDOverlayWindow.h */,
+				DDE5831D18B72444009D4844 /* CMDOverlayWindow.m */,
+				DDE5831F18B72460009D4844 /* CMDOverlayController.h */,
+				DDE5832018B72460009D4844 /* CMDOverlayController.m */,
 			);
 			name = Commando;
 			path = ../Commando;
@@ -218,6 +231,7 @@
 			files = (
 				DD0C5B7A17D098720052AE16 /* InfoPlist.strings in Resources */,
 				DDB6094A17D34D570082B3DA /* CMDSimpleFormViewController.xib in Resources */,
+				DDE5831B18B7232E009D4844 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,7 +243,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD0C5B7C17D098720052AE16 /* main.m in Sources */,
+				DDE5832118B72460009D4844 /* CMDOverlayController.m in Sources */,
 				DD0C5B8017D098720052AE16 /* CMDAppDelegate.m in Sources */,
+				DDE5831E18B72444009D4844 /* CMDOverlayWindow.m in Sources */,
 				DD0C5B9217D09B340052AE16 /* UIApplication+CMDCommando.m in Sources */,
 				DD0C5B9317D09B340052AE16 /* CMDShortcutManager.m in Sources */,
 				DD3C0F6A17D4444100037FBE /* UITouch+CMDAdditions.m in Sources */,

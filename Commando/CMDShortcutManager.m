@@ -10,7 +10,7 @@
 
 #if CMD_COMMANDO_ENABLED
 
-#import "CMDHighlighterView.h"
+#import "CMDOverlayController.h"
 #import "UITouch+CMDAdditions.h"
 #import "UIView+CMDAdditions.h"
 
@@ -35,12 +35,12 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 
 @property (nonatomic, assign) CMDShortcutMode mode;
 @property (nonatomic, assign) CMDKeyInputCode currentKeyDown;
+@property (nonatomic, assign) CMDKeyModifier currentKeyModifiers;
 @property (nonatomic, strong) NSString *findSearchString;
-@property (nonatomic, strong) UIView *overlayView;
-@property (nonatomic, strong) NSMutableArray *highlighterViews;
 @property (nonatomic, weak) UIScrollView *currentScrollView;
 @property (nonatomic, assign) CGFloat scrollSpeed;
 @property (nonatomic, strong) NSTimer *scrollTimer;
+@property (nonatomic, strong) CMDOverlayController *overlayController;
 
 @end
 
@@ -60,10 +60,8 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     if (!self) return nil;
 
     self.currentKeyDown = NSNotFound;
-    self.overlayView = UIView.new;
-    self.overlayView.userInteractionEnabled = NO;
-    self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.highlighterViews = NSMutableArray.new;
+    self.currentKeyModifiers = CMDKeyModifierNone;
+    self.overlayController = CMDOverlayController.new;
 
     //defaults
     self.popNavigationItemShortcutKey = CMDKeyInputCodeBackspace;
@@ -93,6 +91,7 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 - (void)handleKeyDown:(CMDKeyInputCode)key withModifiers:(CMDKeyModifier)modifiers {
     BOOL newKey = self.currentKeyDown != key;
     self.currentKeyDown = key;
+    self.currentKeyModifiers = modifiers;
     [self.scrollTimer invalidate];
     self.scrollTimer = nil;
 
@@ -185,43 +184,39 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
     [self resetHighlightedViews];
     self.mode = CMDShortcutModeFindHitZones;
     self.findSearchString = @"";
-    [self.keyWindow.subviews.lastObject addSubview:self.overlayView];
-    
+
+    self.overlayController.hidden = NO;
+
     //find all tapable views
-    NSArray *tapableViews = [self.keyWindow cmd_findSubviewsMatching:^BOOL(UIView *view) {
-        if (view == self.overlayView) return NO;
-        if (![view cmd_isVisible]) return NO;
-        if ([view isKindOfClass:UIControl.class]) return YES;
-        if ([view isKindOfClass:UITableViewCell.class]) return YES;
-        if ([view isKindOfClass:UICollectionViewCell.class]) return YES;
-        if ([view isKindOfClass:NSClassFromString(@"UINavigationItemButtonView")]) return YES;
-        for (UIGestureRecognizer *gestureRecognizer in view.gestureRecognizers) {
-            if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
-                UITapGestureRecognizer *tapGestureRecognizer = (id)gestureRecognizer;
-                if (tapGestureRecognizer.numberOfTapsRequired == 1) {
-                    return YES;
+    NSMutableArray *tapableViews = NSMutableArray.new;
+    NSArray *windows = (self.currentKeyModifiers & CMDKeyModifierShift) ? UIApplication.sharedApplication.windows : @[UIApplication.sharedApplication.keyWindow];
+
+    for (UIWindow *window in windows) {
+        [tapableViews addObjectsFromArray:[window cmd_findSubviewsMatching:^BOOL(UIView *view) {
+            if ([view isKindOfClass:UIWindow.class]) return NO;
+            if (view == self.overlayController.view) return NO;
+            if (![view cmd_isVisible]) return NO;
+            if ([view isKindOfClass:UIControl.class]) return YES;
+            if ([view isKindOfClass:UITableViewCell.class]) return YES;
+            if ([view isKindOfClass:UICollectionViewCell.class]) return YES;
+            if ([view isKindOfClass:NSClassFromString(@"UINavigationItemButtonView")]) return YES;
+            for (UIGestureRecognizer *gestureRecognizer in view.gestureRecognizers) {
+                if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
+                    UITapGestureRecognizer *tapGestureRecognizer = (id)gestureRecognizer;
+                    if (tapGestureRecognizer.numberOfTapsRequired == 1) {
+                        return YES;
+                    }
                 }
             }
-        }
-        return NO;
-    }];
+            return NO;
+        }]];
+    }
 
     NSArray *hintStrings = [self generateHintStringsForViewCount:tapableViews.count];
 
     int i = 0;
     for (UIView *view in tapableViews) {
-        CMDHighlighterView *highlighterView = CMDHighlighterView.new;
-        highlighterView.highlightColor = self.findHitZonesHighlightColor;
-        [self.overlayView addSubview:highlighterView];
-        highlighterView.targetView = view;
-        [self.highlighterViews addObject:highlighterView];
-
-        //attach hint strings
-        highlighterView.hint = hintStrings[i];
-
-        //calculate frame
-        [highlighterView updateFrame];
-
+        [self.overlayController highlightView:view color:self.findHitZonesHighlightColor hint:hintStrings[i]];
         i++;
 	}
 }
@@ -236,9 +231,14 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
 - (void)scrollWithKey:(CMDKeyInputCode)key {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reset) object:nil];
     if (!self.currentScrollView) {
-        NSArray *scrollViews = (id)[self.keyWindow cmd_findSubviewsMatching:^BOOL(UIView *subview) {
-            return [subview isKindOfClass:UIScrollView.class];
-        }];
+        NSMutableArray *scrollViews = NSMutableArray.new;
+
+        NSArray *windows = (self.currentKeyModifiers & CMDKeyModifierShift) ? UIApplication.sharedApplication.windows : @[UIApplication.sharedApplication.keyWindow];
+        for (UIWindow *window in windows) {
+            [scrollViews addObjectsFromArray:[window cmd_findSubviewsMatching:^BOOL(UIView *subview) {
+                return [subview isKindOfClass:UIScrollView.class];
+            }]];
+        }
 
         UIScrollView *largestScrollView = [scrollViews lastObject];
         CGFloat currentLargestArea = largestScrollView.bounds.size.width * largestScrollView.bounds.size.height;
@@ -302,27 +302,19 @@ typedef NS_ENUM(NSUInteger, CMDShortcutMode) {
         }
     }
 
-    BOOL hasMatches = NO;
-    for (CMDHighlighterView *highlighterView in self.highlighterViews) {
-        BOOL isMatch = [highlighterView highlightIfMatches:self.findSearchString];
-        hasMatches = isMatch || hasMatches;
-        if ([highlighterView.hint isEqualToString:self.findSearchString.uppercaseString]) {
-            //simulate click on this view
-            [self performSelector:@selector(performTapOnView:) withObject:highlighterView.targetView afterDelay:kCMDFindCompleteDelay];
-            return;
+    [self.overlayController findViewMatching:self.findSearchString completion:^(UIView *targetView, BOOL hasPartialMatches){
+        //simulate click on this view
+        if (targetView) {
+            [self performSelector:@selector(performTapOnView:) withObject:targetView afterDelay:kCMDFindCompleteDelay];
         }
-    }
-    if (!hasMatches) {
-        self.mode = CMDShortcutModeIdle;
-    }
+        if (!hasPartialMatches) {
+            self.mode = CMDShortcutModeIdle;
+        }
+    }];
 }
 
 - (void)resetHighlightedViews {
-    [self.overlayView removeFromSuperview];
-    for (UIView *view in self.highlighterViews) {
-        [view removeFromSuperview];
-    }
-    [self.highlighterViews removeAllObjects];
+    self.overlayController.hidden = YES;
 }
 
 #pragma mark - hint code generation
