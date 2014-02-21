@@ -17,8 +17,7 @@
     self.frame = UIScreen.mainScreen.bounds;
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.opaque = NO;
-    self.windowLevel = 3000; //ontop of all the things
-
+    
     return self;
 }
 

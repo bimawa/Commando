@@ -41,6 +41,16 @@
 
 - (void)setHidden:(BOOL)hidden {
     self.window.hidden = hidden;
+
+    // ensure window is ontop of everything else
+    CGFloat maxWindowLevel = 0;
+    for (UIWindow *window in UIApplication.sharedApplication.windows) {
+        maxWindowLevel = MAX(window.windowLevel, maxWindowLevel);
+    }
+    self.window.windowLevel = maxWindowLevel + 1;
+
+    // if hiding window remove all highlighter views
+    if (!hidden) return;
     for (UIView *view in self.highlighterViews) {
         [view removeFromSuperview];
     }
