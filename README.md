@@ -40,5 +40,3 @@ Also you don't need to worry about this code shipping in your production app, be
 - Inspired by [vimium](http://vimium.github.io/)
 - Code for listening to keyboard events [ORSimulatorKeyboardAccessor](https://github.com/orta/ORSimulatorKeyboardAccessor)
 - Code for creating fake UITouches [KIF](https://github.com/kif-framework/KIF)
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/cloudkite/commando/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
