@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 cloudling. All rights reserved.
 //
 
-#define CMD_COMMANDO_ENABLED TARGET_IPHONE_SIMULATOR
+#define CMD_COMMANDO_ENABLED DEBUG
 
 #if CMD_COMMANDO_ENABLED
 
