@@ -47,10 +47,16 @@ static void __attribute__((constructor)) CMDCommandoApplicationInstall() {
 - (void)cmd_handleKeyUIEvent:(UIPhysicalKeyboardEvent *)event {
     [self cmd_handleKeyUIEvent:event];
 
-    if (event._isKeyDown) {
-        [[CMDShortcutManager sharedManager] handleKeyDown:event._keyCode withModifiers:event._modifierFlags];
-    } else {
-        [[CMDShortcutManager sharedManager] handleKeyUp:event._keyCode withModifiers:event._modifierFlags];
+     if (event._inputFlags > 0)
+    {
+        if (event._isKeyDown)
+        {
+            [[CMDShortcutManager sharedManager] handleKeyDown:event._keyCode withModifiers:event._modifierFlags];
+        }
+        else
+        {
+            [[CMDShortcutManager sharedManager] handleKeyUp:event._keyCode withModifiers:event._modifierFlags];
+        }
     }
 }
 
