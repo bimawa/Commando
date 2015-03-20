@@ -29,10 +29,11 @@
 @end
 
 @interface UIPhysicalKeyboardEvent : UIPhysicalButtonsEvent
-@property (nonatomic, readonly) long _keyCode;
-@property (nonatomic, assign) int _modifierFlags;
-@property (nonatomic, strong) NSString *_unmodifiedInput;
-@property (nonatomic, readonly) BOOL _isKeyDown;
+@property (nonatomic, readonly)  long      _keyCode;
+@property (nonatomic, readonly)  long      _inputFlags;
+@property (nonatomic, assign)    int       _modifierFlags;
+@property (nonatomic, strong)    NSString *_unmodifiedInput;
+@property (nonatomic, readonly)  BOOL      _isKeyDown;
 @end
 
 static void __attribute__((constructor)) CMDCommandoApplicationInstall() {
